@@ -1,0 +1,13 @@
+{
+  "name": "Validate SKILL.md Format",
+  "version": "1.0.0",
+  "description": "Verifica que cada SKILL.md creado o editado cumpla con el estándar agentskills.io",
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["skills/**/SKILL.md"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Se modificó un archivo SKILL.md en skills/. Verifica que cumpla el estándar agentskills.io: (1) tiene front-matter YAML con name, version, description, author, tags y triggers, (2) tiene secciones 'Cuándo activar este Skill' e 'Instrucciones para el agente', (3) las instrucciones son claras y accionables para Kiro, (4) los triggers en español e inglés cubren los casos de uso principales. Si hay problemas, corrígelos."
+  }
+}

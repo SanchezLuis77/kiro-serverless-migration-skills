@@ -1,0 +1,13 @@
+{
+  "name": "Validate SAM Templates",
+  "version": "1.0.0",
+  "description": "Valida automáticamente los templates AWS SAM cada vez que se edita un archivo .yaml en la carpeta skills/",
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["skills/**/*.yaml", "skills/**/*.yml"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Se modificó un template SAM en skills/. Verifica que el template sea válido: (1) tiene Transform: AWS::Serverless-2016-10-31, (2) todos los recursos tienen Type y Properties correctos, (3) los Parameters están referenciados correctamente, (4) los roles IAM usan mínimo privilegio, (5) no hay valores hardcodeados de cuenta/región. Si encuentras problemas, corrígelos."
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "Gap Coverage Check",
+  "version": "1.0.0",
+  "description": "Al completar una tarea de spec, verifica que el output cubre los gaps asignados a ese Skill",
+  "when": {
+    "type": "postTaskExecution"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Se completó una tarea del proyecto. Revisa el output generado y verifica que cubre los gaps documentados en monolith/serverless_taller/GAP_ANALYSIS.md que le corresponden al Skill trabajado. Para cada gap asignado: (1) confirma que existe un artefacto (template SAM, script Python, o instrucción SKILL.md) que lo resuelve, (2) si algún gap no está cubierto, documéntalo como pendiente en el archivo README.md del Skill correspondiente."
+  }
+}

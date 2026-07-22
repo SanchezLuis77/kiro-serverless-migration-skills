@@ -1,0 +1,13 @@
+{
+  "name": "Python Script Quality Check",
+  "version": "1.0.0",
+  "description": "Revisa calidad de los scripts Python de análisis AST en los Skills cada vez que se editan",
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["skills/**/scripts/*.py"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Se modificó un script Python en skills/. Verifica: (1) el script no hace llamadas a servicios externos (privacy by design — solo operaciones en memoria local), (2) maneja correctamente errores de parsing AST con try/except, (3) el output es JSON serializable, (4) tiene docstring explicando qué analiza y qué retorna, (5) es compatible con Python 3.9+. Si hay problemas, corrígelos."
+  }
+}
