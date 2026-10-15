@@ -1,0 +1,445 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1. Scaffolding del Skill (estructura de directorios, SKILL.md, README.md)": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763411346
+      },
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763423085
+      },
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763625241
+      }
+    ],
+    "2.1 Implementar `BlueprintDiscoverer` con descubrimiento en dos pasos: parseo AST de `app/__init__.py` para extraer variables de blueprint y sus `url_prefix`, seguido de búsqueda recursiva de los archivos `routes.py` correspondientes": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763412500
+      },
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763628257
+      },
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763930968
+      }
+    ],
+    "2.2 Escribir prueba unitaria para `BlueprintDiscoverer` sobre el monolito de referencia": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763412573
+      },
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763934477
+      },
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791764469078
+      }
+    ],
+    "3.1 Implementar `EndpointExtractor` para parsear un archivo `routes.py` y extraer todas las funciones de ruta con sus metadatos básicos": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763412721
+      },
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763937607
+      },
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791764472529
+      }
+    ],
+    "3.2 Escribir prueba unitaria para `EndpointExtractor` sobre `auth/routes.py` del monolito de referencia": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763412781
+      },
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791764476204
+      }
+    ],
+    "4.1 Implementar `LocalFilesystemDetector` (detecta `AP-local-filesystem`, GAP-02)": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763412846
+      },
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791764476589
+      }
+    ],
+    "4.2 Implementar `StrftimeDetector` (detecta `AP-strftime-sqlite`, GAP-04)": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763412906
+      },
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791764477031
+      },
+      {
+        "executionId": "a61c1013-f42d-45bd-952f-0edb17863b58",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791766292962
+      }
+    ],
+    "4.3 Implementar `SessionDetector` (detecta `AP-session-flask`, GAP-06)": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763412968
+      },
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791764477734
+      },
+      {
+        "executionId": "a61c1013-f42d-45bd-952f-0edb17863b58",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791766422047
+      }
+    ],
+    "4.4 Implementar `TimestampIdDetector` (detecta `AP-order-num-ts`, GAP-14)": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763413037
+      },
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791764478057
+      },
+      {
+        "executionId": "a61c1013-f42d-45bd-952f-0edb17863b58",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791766425529
+      },
+      {
+        "executionId": "a61c1013-f42d-45bd-952f-0edb17863b58",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791766684075
+      }
+    ],
+    "4.5 Escribir pruebas unitarias para los cuatro detectores de función sobre el monolito de referencia": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763413109
+      }
+    ],
+    "5.1 Implementar `TokenBlacklistDetector` (detecta `AP-token-blacklist`, GAP-03)": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763413202
+      },
+      {
+        "executionId": "a61c1013-f42d-45bd-952f-0edb17863b58",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791766688992
+      },
+      {
+        "executionId": "a61c1013-f42d-45bd-952f-0edb17863b58",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791766862139
+      }
+    ],
+    "5.2 Implementar `CrossBlueprintDetector` (detecta `AP-cross-blueprint`)": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763413309
+      },
+      {
+        "executionId": "a61c1013-f42d-45bd-952f-0edb17863b58",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791766692514
+      },
+      {
+        "executionId": "a61c1013-f42d-45bd-952f-0edb17863b58",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791768915338
+      }
+    ],
+    "5.3 Implementar `InMemorySingletonDetector` (detecta `AP-in-memory-singleton`)": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763413369
+      },
+      {
+        "executionId": "a61c1013-f42d-45bd-952f-0edb17863b58",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791766695753
+      },
+      {
+        "executionId": "a61c1013-f42d-45bd-952f-0edb17863b58",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791821412378
+      }
+    ],
+    "5.4 Implementar la clase `AntiPatternRegistry` que coordina todos los detectores": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763413429
+      },
+      {
+        "executionId": "a61c1013-f42d-45bd-952f-0edb17863b58",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791821510101
+      },
+      {
+        "executionId": "a61c1013-f42d-45bd-952f-0edb17863b58",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791821928632
+      }
+    ],
+    "5.5 Escribir pruebas unitarias para los detectores de módulo sobre el monolito de referencia": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763413495
+      }
+    ],
+    "6. Checkpoint — verificar cobertura de detección antes de continuar": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763413568
+      }
+    ],
+    "7.1 Implementar `ComplexityScorer` con reglas de precedencia estrictamente ordenadas": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763413631
+      }
+    ],
+    "7.2 Implementar `ComputeTargetClassifier` con árbol de decisión": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763413694
+      }
+    ],
+    "7.3 Escribir pruebas unitarias para `ComplexityScorer` y `ComputeTargetClassifier`": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763413746
+      }
+    ],
+    "8.1 Implementar la lógica de cálculo de `cohesion` e `isolation` de módulos": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763413811
+      }
+    ],
+    "8.2 Implementar la derivación de `lambda_layers` recomendadas": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763413874
+      }
+    ],
+    "8.3 Implementar la generación de `migration_sequence` con las 5 fases ordenadas por complejidad de acoplamiento creciente": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763413933
+      }
+    ],
+    "8.4 Implementar el ensamblaje del diccionario completo del manifiesto y la escritura a disco": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763413996
+      }
+    ],
+    "8.5 Escribir prueba unitaria para `ManifestBuilder` con datos del monolito de referencia": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763414046
+      }
+    ],
+    "9.1 Implementar `main()` con `argparse` para la interfaz de línea de comandos": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763414110
+      }
+    ],
+    "9.2 Implementar manejo de errores fatales y tolerancia a fallos por archivo": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763414167
+      }
+    ],
+    "9.3 Escribir pruebas unitarias para los códigos de salida y mensajes de error": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763414228
+      }
+    ],
+    "10. Checkpoint — integración completa antes de las pruebas": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763414292
+      }
+    ],
+    "11.1 Escribir `test_full_analysis_reference_monolith` que ejecuta `analyze_monolith.py --path monolith/` y valida el manifiesto completo": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763414360
+      }
+    ],
+    "11.2 Escribir pruebas de robustez con directorios sintéticos": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763414422
+      }
+    ],
+    "12.1 Implementar los generadores sintéticos de blueprints Flask para `hypothesis`": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763414484
+      }
+    ],
+    "12.2 Escribir prueba de Propiedad 1: Completitud de campos obligatorios de endpoint": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763414546
+      }
+    ],
+    "12.3 Escribir prueba de Propiedad 2: Dominio cerrado de `compute_target`": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763414611
+      }
+    ],
+    "12.4 Escribir prueba de Propiedad 3: Dominio cerrado y precedencia de `migration_complexity`": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763414673
+      }
+    ],
+    "12.5 Escribir prueba de Propiedad 4: Invariante de conteo del summary": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763414741
+      }
+    ],
+    "12.6 Escribir prueba de Propiedad 5: Round-trip de serialización JSON": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763414896
+      }
+    ],
+    "12.7 Escribir prueba de Propiedad 6: Secuencia de migración no vacía": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763414975
+      }
+    ],
+    "12.8 Escribir prueba de Propiedad 7: Detección del bloqueador crítico GAP-02": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763415056
+      }
+    ],
+    "12.9 Escribir prueba de Propiedad 8: Completitud de la detección cross-blueprint": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763415186
+      }
+    ],
+    "12.10 Escribir prueba de Propiedad 9: Aislamiento de la detección por función": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763415229
+      }
+    ],
+    "12.11 Escribir prueba de Propiedad 10: Partición completa del summary": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763415273
+      }
+    ],
+    "12.12 Escribir prueba de robustez ante contenido arbitrario (Propiedad adicional — Requirements 8.1)": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763415314
+      }
+    ],
+    "13.1 Ejecutar `python skills/skill-01-analyzer/scripts/analyze_monolith.py --path monolith/` y verificar que produce `monolith/migration-manifest.json` sin errores": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763415359
+      }
+    ],
+    "13.2 Verificar que el Analizador opera sin conectividad de red y sin dependencias externas": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791763415403
+      }
+    ],
+    "2. Implementar `BlueprintDiscoverer`": [
+      {
+        "executionId": "041eb170-8b31-44ca-a25d-52f0d510faeb",
+        "chatSessionId": "sess_84b01db1-f0b2-4991-a27b-f4525efc91ea",
+        "timestamp": 1791764469141
+      }
+    ]
+  }
+}
