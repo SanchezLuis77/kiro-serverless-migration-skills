@@ -42,7 +42,7 @@ Experimento empírico preliminar sobre un monolito Flask (5 módulos, 29 endpoin
 |---|-------|------|--------|-----|
 | 1 | Analizador de monolito | Análisis | ✅ Completo | 2,708 |
 | 2 | Migrador de persistencia | Persistencia | ✅ Completo | 743 |
-| 3 | Orquestador Strangler Fig | Autenticación/Coexistencia | 🔲 Pendiente | - |
+| 3 | Orquestador Strangler Fig | Autenticación/Coexistencia | ✅ Completo | 655 |
 | 4 | Migrador de uploads | Operacional | 🔲 Pendiente | - |
 | 5 | Validador post-generación | Observabilidad/Validación | 🔲 Pendiente | - |
 
