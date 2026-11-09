@@ -1,0 +1,65 @@
+name: Validate Skills
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Validate Skill 01 syntax
+      run: |
+        python -m py_compile skills/skill-01-analyzer/scripts/analyze_monolith.py
+        echo "✅ Skill 01 syntax valid"
+    
+    - name: Validate Skill 02 syntax
+      run: |
+        python -m py_compile skills/skill-02-persistence/scripts/generate_persistence.py
+        echo "✅ Skill 02 syntax valid"
+    
+    - name: Validate Skill 03 syntax
+      run: |
+        python -m py_compile skills/skill-03-strangler/scripts/generate_strangler.py
+        echo "✅ Skill 03 syntax valid"
+    
+    - name: Test Skill 01 execution
+      run: |
+        python skills/skill-01-analyzer/scripts/analyze_monolith.py \
+          --path monolith/ \
+          --output /tmp/test-manifest.json
+        test -f /tmp/test-manifest.json || exit 1
+        echo "✅ Skill 01 execution successful"
+    
+    - name: Test Skill 02 execution
+      run: |
+        python skills/skill-02-persistence/scripts/generate_persistence.py \
+          --manifest /tmp/test-manifest.json \
+          --monolith monolith/ \
+          --output /tmp/test-persistence
+        test -f /tmp/test-persistence/template-vpc.yaml || exit 1
+        echo "✅ Skill 02 execution successful"
+    
+    - name: Test Skill 03 execution
+      run: |
+        python skills/skill-03-strangler/scripts/generate_strangler.py \
+          --manifest /tmp/test-manifest.json \
+          --output /tmp/test-strangler
+        test -f /tmp/test-strangler/template-api-gateway.yaml || exit 1
+        echo "✅ Skill 03 execution successful"
+    
+    - name: Validate JSON manifests
+      run: |
+        python -c "import json; json.load(open('/tmp/test-manifest.json'))"
+        python -c "import json; json.load(open('/tmp/test-strangler/routing-rules.json'))"
+        echo "✅ All JSON files valid"
