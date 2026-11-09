@@ -38,13 +38,13 @@ Experimento empírico preliminar sobre un monolito Flask (5 módulos, 29 endpoin
 
 ## Skills Desarrollados
 
-| # | Skill | Capa | Estado |
-|---|-------|------|--------|
-| 1 | Analizador de monolito | Análisis | 🔲 Pendiente |
-| 2 | Migrador de persistencia | Persistencia | 🔲 Pendiente |
-| 3 | Orquestador Strangler Fig | Autenticación/Coexistencia | 🔲 Pendiente |
-| 4 | Migrador de uploads | Operacional | 🔲 Pendiente |
-| 5 | Validador post-generación | Observabilidad/Validación | 🔲 Pendiente |
+| # | Skill | Capa | Estado | LOC |
+|---|-------|------|--------|-----|
+| 1 | Analizador de monolito | Análisis | ✅ Completo | 2,708 |
+| 2 | Migrador de persistencia | Persistencia | ✅ Completo | 743 |
+| 3 | Orquestador Strangler Fig | Autenticación/Coexistencia | 🔲 Pendiente | - |
+| 4 | Migrador de uploads | Operacional | 🔲 Pendiente | - |
+| 5 | Validador post-generación | Observabilidad/Validación | 🔲 Pendiente | - |
 
 ## Instalación de Skills en Kiro
 
