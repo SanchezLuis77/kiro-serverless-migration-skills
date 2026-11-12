@@ -1,0 +1,89 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Lambda para generación de presigned URLs (S3 uploads).
+  Generado por Skill 04 — Upload Migrator.
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+    Description: Ambiente de despliegue
+
+  BucketStackName:
+    Type: String
+    Default: upload-s3-stack
+    Description: Nombre del stack de S3 (para importar bucket name)
+
+Globals:
+  Function:
+    Timeout: 10
+    MemorySize: 256
+    Runtime: python3.11
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        BUCKET_NAME: !ImportValue
+          Fn::Sub: '${BucketStackName}-BucketName'
+        MAX_FILE_SIZE_MB: '16'
+        ALLOWED_EXTENSIONS: 'pdf,png,jpg,jpeg,docx,xlsx'
+        URL_EXPIRATION_SECONDS: '300'
+
+Resources:
+  # ====================================================================
+  # Lambda — Generación de presigned URLs
+  # ====================================================================
+  PresignedUrlFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'upload-presigned-url-${Environment}'
+      CodeUri: presigned-function/
+      Handler: lambda_function.lambda_handler
+      Description: Genera presigned URLs para upload directo a S3
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+                - s3:GetObject
+              Resource:
+                Fn::Sub:
+                  - '${BucketArn}/*'
+                  - BucketArn: !ImportValue
+                      Fn::Sub: '${BucketStackName}-BucketArn'
+      Events:
+        GetUploadUrl:
+          Type: Api
+          Properties:
+            Path: /upload-url
+            Method: GET
+            RestApiId: !Ref PresignedApi
+
+  # ====================================================================
+  # API Gateway — Endpoint público para solicitar presigned URLs
+  # ====================================================================
+  PresignedApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub 'upload-presigned-api-${Environment}'
+      StageName: !Ref Environment
+      Cors:
+        AllowOrigin: "'*'"
+        AllowHeaders: "'Content-Type,Authorization'"
+        AllowMethods: "'GET,OPTIONS'"
+
+Outputs:
+  PresignedUrlFunctionArn:
+    Description: ARN de la Lambda de presigned URLs
+    Value: !GetAtt PresignedUrlFunction.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-FunctionArn'
+
+  ApiEndpoint:
+    Description: URL del API Gateway
+    Value: !Sub 'https://${PresignedApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/upload-url'
+    Export:
+      Name: !Sub '${AWS::StackName}-ApiEndpoint'
