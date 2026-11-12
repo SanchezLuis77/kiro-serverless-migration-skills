@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-11-09  
 **Status:** 🟢 ON TRACK  
-**Completion:** 60% (3/5 Skills)
+**Completion:** 80% (4/5 Skills)
 
 ---
 
@@ -11,14 +11,14 @@
 | Milestone | Target Date | Status | Progress |
 |-----------|-------------|--------|----------|
 | Skills 1-3 | Week 1 (Nov 11-17) | ✅ COMPLETE | 100% |
-| Skills 4-5 | Week 2 (Nov 18-24) | 🔄 IN PROGRESS | 0% |
+| Skills 4-5 | Week 2 (Nov 18-24) | 🔄 IN PROGRESS | 50% |
 | Experiment | Week 3 (Nov 25-Dec 1) | ⏳ PENDING | 0% |
 | Thesis Writing | Weeks 4-9 | ⏳ PENDING | 0% |
-| **Final Delivery** | **Jan 19, 2027** | 🎯 **TARGET** | **60%** |
+| **Final Delivery** | **Jan 19, 2027** | 🎯 **TARGET** | **80%** |
 
 ---
 
-## ✅ Completed Skills (3/5)
+## ✅ Completed Skills (4/5)
 
 ### Skill 01: Analizador de Monolito ✅
 **Completed:** Oct 14, 2026  
@@ -82,21 +82,34 @@
 
 ---
 
-## 🔲 Pending Skills (2/5)
+### Skill 04: Migrador de Uploads ✅
+**Completed:** Nov 9, 2026  
+**LOC:** 828 lines  
+**Files:** 6 (SKILL.md, generator, Lambda code, guides)
 
-### Skill 04: Migrador de Uploads 🔲
-**Target:** Nov 10-11, 2026  
-**Estimated LOC:** ~400 lines  
-**Estimated Time:** 1-2 hours
+**Features:**
+- ✅ S3 bucket CloudFormation template
+- ✅ Lambda for presigned URL generation (Python 3.11)
+- ✅ Detects AP-local-filesystem from manifest
+- ✅ Client migration guide (breaking changes)
+- ✅ Deployment guide with SAM CLI
+- ✅ Progress tracking example (XMLHttpRequest)
 
-**Planned Features:**
-- S3 bucket template generation
-- Presigned URL Lambda function
-- Detects AP-local-filesystem from manifest
-- Client-side migration guide
-- Breaking changes documentation
+**Infrastructure Generated:**
+- S3 bucket with versioning + encryption
+- CORS configuration for direct upload
+- Lifecycle policy (90 days)
+- Lambda + API Gateway
+- Presigned URL with 5-min expiration
 
-**Complexity:** 🟢 LOW (simpler than Skills 2-3)
+**Resolves Anti-Patterns:**
+- AP-local-filesystem (GAP-02): Flask `save()` → S3 presigned URLs
+
+**Performance:** ~0.4s execution (99% faster than target)
+
+---
+
+## 🔲 Pending Skills (1/5)
 
 ---
 
@@ -121,8 +134,8 @@
 ### Code Metrics
 | Metric | Value |
 |--------|-------|
-| **Total LOC (completed)** | 4,106 lines |
-| **Total LOC (projected)** | ~5,000 lines |
+| **Total LOC (completed)** | 4,934 lines |
+| **Total LOC (projected)** | ~5,500 lines |
 | **Files created** | 35+ files |
 | **Documentation** | ~3,500 lines |
 | **Tests** | 8 passing (Skill 01) |
@@ -133,7 +146,8 @@
 | Skill 01 | ~4 hours | 677 LOC/hour |
 | Skill 02 | ~2 hours | 372 LOC/hour |
 | Skill 03 | ~2 hours | 328 LOC/hour |
-| **Total** | **~8 hours** | **513 LOC/hour** |
+| Skill 04 | ~2 hours | 414 LOC/hour |
+| **Total** | **~10 hours** | **493 LOC/hour** |
 
 ### Performance Metrics
 | Skill | Execution Time | Target | Performance |
@@ -141,6 +155,7 @@
 | Skill 01 | 1.2s | 30s | 96% faster ✅ |
 | Skill 02 | 0.5s | 30s | 98% faster ✅ |
 | Skill 03 | 0.6s | 30s | 98% faster ✅ |
+| Skill 04 | 0.4s | 30s | 99% faster ✅ |
 
 ---
 
@@ -148,12 +163,12 @@
 
 ### Completed
 - ✅ Anteproyecto (24 de junio 2026)
-- ✅ Skills 1-3 implementation
+- ✅ Skills 1-4 implementation
 - ✅ Complete documentation (SKILL.md, README.md, guides)
 - ✅ GitHub repository with CI/CD
 
 ### Pending
-- 🔲 Skills 4-5 implementation
+- 🔲 Skill 5 implementation
 - 🔲 Comparative experiment (Claude vs Kiro vs Kiro+Skills)
 - 🔲 Thesis chapters 1-8
 - 🔲 Final defense preparation
@@ -162,22 +177,18 @@
 
 ## 🚀 Next Steps (Priority Order)
 
-1. **Skill 04 Implementation** (Nov 10-11)
-   - Generate S3 bucket templates
-   - Create presigned URL Lambda
-   - Document breaking changes
-
-2. **Skill 05 Implementation** (Nov 12-13)
+1. **Skill 05 Implementation** (Nov 10)
+   - ✅ Skill 04 completed ahead of schedule!
    - Create validation script
    - Generate CloudWatch dashboards
    - Test skeleton generation
 
-3. **Experimental Validation** (Nov 25 - Dec 1)
+2. **Experimental Validation** (Nov 11 - Nov 20)
    - Setup: Claude, Kiro baseline, Kiro+Skills
    - Metrics: Coverage, gaps, effort
    - Documentation: Results + analysis
 
-4. **Thesis Writing** (Dec 2 - Jan 12)
+3. **Thesis Writing** (Nov 21 - Jan 12)
    - Chapters 1-4: Background + design (2 weeks)
    - Chapters 5-6: Implementation + results (2 weeks)
    - Chapters 7-8: Discussion + conclusions (1 week)
@@ -189,7 +200,7 @@
 
 | Risk | Probability | Impact | Mitigation |
 |------|-------------|--------|------------|
-| Skills 4-5 more complex than estimated | Low | Medium | Both are simpler than Skills 2-3 |
+| Skill 5 more complex than estimated | Low | Low | Validation logic, simplest skill |
 | Experiment setup issues | Medium | High | Start early, test with toy example |
 | Thesis writing delays | Medium | High | 6 weeks allocated (buffer included) |
 | AWS deployment costs | Low | Low | Use free tier + tear down after tests |
@@ -219,6 +230,7 @@
 | Skill 01 docs | ✅ Complete | ~50 |
 | Skill 02 docs | ✅ Complete | ~40 |
 | Skill 03 docs | ✅ Complete | ~45 |
+| Skill 04 docs | ✅ Complete | ~55 |
 | Thesis draft | 🔲 Pending | TBD |
 
 ---
@@ -247,5 +259,5 @@
 
 ---
 
-**Last Updated:** 2026-11-09 20:30 UTC  
-**Next Review:** 2026-11-10 (after Skill 04 completion)
+**Last Updated:** 2026-11-09 22:00 UTC  
+**Next Review:** 2026-11-10 (after Skill 05 completion)
