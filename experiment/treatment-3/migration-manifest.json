@@ -1,0 +1,605 @@
+{
+  "metadata": {
+    "analyzed_at": "2026-10-14T02:52:00.060349+00:00",
+    "monolith_path": "C:\\Users\\USUARIO\\Documents\\TG-MAESTRIA\\kiro-serverless-migration-skills\\monolith",
+    "total_endpoints": 29,
+    "analyzer_version": "1.0.0",
+    "skill_version": "1.0.0",
+    "warnings": []
+  },
+  "summary": {
+    "total_endpoints": 29,
+    "lambda_candidates": 29,
+    "fargate_candidates": 0,
+    "app_runner_candidates": 0,
+    "requires_transformation": 0,
+    "critical_blockers": 0,
+    "anti_pattern_summary": {
+      "AP-token-blacklist": 5,
+      "AP-cross-blueprint": 12
+    }
+  },
+  "modules": [
+    {
+      "name": "auth",
+      "url_prefix": "/api/auth",
+      "cohesion": "low",
+      "isolation": "high",
+      "cross_blueprint_imports": [],
+      "endpoints": [
+        {
+          "id": "auth.register",
+          "method": "POST",
+          "path": "/api/auth/register",
+          "auth_required": false,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "low",
+          "requires_architectural_transformation": false,
+          "anti_patterns": [
+            {
+              "code": "AP-token-blacklist",
+              "description": "Lista negra de tokens JWT almacenada en un set() en memoria del proceso. Con semántica fail-open: incompatible con el modelo multi-instancia de Lambda. Debe externalizarse a Amazon DynamoDB con atributo TTL.",
+              "gap_ids": [
+                "GAP-03"
+              ],
+              "severity": "high",
+              "location": "variable '_tokens_revocados' = set() a nivel de módulo"
+            }
+          ]
+        },
+        {
+          "id": "auth.login",
+          "method": "POST",
+          "path": "/api/auth/login",
+          "auth_required": false,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "low",
+          "requires_architectural_transformation": false,
+          "anti_patterns": [
+            {
+              "code": "AP-token-blacklist",
+              "description": "Lista negra de tokens JWT almacenada en un set() en memoria del proceso. Con semántica fail-open: incompatible con el modelo multi-instancia de Lambda. Debe externalizarse a Amazon DynamoDB con atributo TTL.",
+              "gap_ids": [
+                "GAP-03"
+              ],
+              "severity": "high",
+              "location": "variable '_tokens_revocados' = set() a nivel de módulo"
+            }
+          ]
+        },
+        {
+          "id": "auth.perfil",
+          "method": "GET",
+          "path": "/api/auth/me",
+          "auth_required": true,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "low",
+          "requires_architectural_transformation": false,
+          "anti_patterns": [
+            {
+              "code": "AP-token-blacklist",
+              "description": "Lista negra de tokens JWT almacenada en un set() en memoria del proceso. Con semántica fail-open: incompatible con el modelo multi-instancia de Lambda. Debe externalizarse a Amazon DynamoDB con atributo TTL.",
+              "gap_ids": [
+                "GAP-03"
+              ],
+              "severity": "high",
+              "location": "variable '_tokens_revocados' = set() a nivel de módulo"
+            }
+          ]
+        },
+        {
+          "id": "auth.logout",
+          "method": "POST",
+          "path": "/api/auth/logout",
+          "auth_required": true,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "medium",
+          "requires_architectural_transformation": false,
+          "anti_patterns": [
+            {
+              "code": "AP-token-blacklist",
+              "description": "Lista negra de tokens JWT almacenada en un set() en memoria del proceso. Con semántica fail-open: incompatible con el modelo multi-instancia de Lambda. Debe externalizarse a Amazon DynamoDB con atributo TTL.",
+              "gap_ids": [
+                "GAP-03"
+              ],
+              "severity": "high",
+              "location": "variable '_tokens_revocados' = set() a nivel de módulo"
+            }
+          ]
+        },
+        {
+          "id": "auth.cambiar_password",
+          "method": "PUT",
+          "path": "/api/auth/password",
+          "auth_required": true,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "medium",
+          "requires_architectural_transformation": false,
+          "anti_patterns": [
+            {
+              "code": "AP-token-blacklist",
+              "description": "Lista negra de tokens JWT almacenada en un set() en memoria del proceso. Con semántica fail-open: incompatible con el modelo multi-instancia de Lambda. Debe externalizarse a Amazon DynamoDB con atributo TTL.",
+              "gap_ids": [
+                "GAP-03"
+              ],
+              "severity": "high",
+              "location": "variable '_tokens_revocados' = set() a nivel de módulo"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "clientes",
+      "url_prefix": "/api/clientes",
+      "cohesion": "low",
+      "isolation": "high",
+      "cross_blueprint_imports": [],
+      "endpoints": [
+        {
+          "id": "clientes.listar_clientes",
+          "method": "GET",
+          "path": "/api/clientes/",
+          "auth_required": true,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "low",
+          "requires_architectural_transformation": false,
+          "anti_patterns": []
+        },
+        {
+          "id": "clientes.crear_cliente",
+          "method": "POST",
+          "path": "/api/clientes/",
+          "auth_required": true,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "medium",
+          "requires_architectural_transformation": false,
+          "anti_patterns": []
+        },
+        {
+          "id": "clientes.obtener_cliente",
+          "method": "GET",
+          "path": "/api/clientes/{cliente_id}",
+          "auth_required": true,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "medium",
+          "requires_architectural_transformation": false,
+          "anti_patterns": []
+        },
+        {
+          "id": "clientes.actualizar_cliente",
+          "method": "PUT",
+          "path": "/api/clientes/{cliente_id}",
+          "auth_required": true,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "medium",
+          "requires_architectural_transformation": false,
+          "anti_patterns": []
+        },
+        {
+          "id": "clientes.eliminar_cliente",
+          "method": "DELETE",
+          "path": "/api/clientes/{cliente_id}",
+          "auth_required": true,
+          "admin_required": true,
+          "compute_target": "lambda",
+          "migration_complexity": "medium",
+          "requires_architectural_transformation": false,
+          "anti_patterns": []
+        },
+        {
+          "id": "clientes.historial_cliente",
+          "method": "GET",
+          "path": "/api/clientes/{cliente_id}/historial",
+          "auth_required": true,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "low",
+          "requires_architectural_transformation": false,
+          "anti_patterns": []
+        }
+      ]
+    },
+    {
+      "name": "servicios",
+      "url_prefix": "/api/servicios",
+      "cohesion": "low",
+      "isolation": "high",
+      "cross_blueprint_imports": [],
+      "endpoints": [
+        {
+          "id": "servicios.listar_servicios",
+          "method": "GET",
+          "path": "/api/servicios/",
+          "auth_required": false,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "low",
+          "requires_architectural_transformation": false,
+          "anti_patterns": []
+        },
+        {
+          "id": "servicios.listar_categorias",
+          "method": "GET",
+          "path": "/api/servicios/categorias",
+          "auth_required": false,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "medium",
+          "requires_architectural_transformation": false,
+          "anti_patterns": []
+        },
+        {
+          "id": "servicios.obtener_servicio",
+          "method": "GET",
+          "path": "/api/servicios/{servicio_id}",
+          "auth_required": false,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "medium",
+          "requires_architectural_transformation": false,
+          "anti_patterns": []
+        },
+        {
+          "id": "servicios.crear_servicio",
+          "method": "POST",
+          "path": "/api/servicios/",
+          "auth_required": true,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "medium",
+          "requires_architectural_transformation": false,
+          "anti_patterns": []
+        },
+        {
+          "id": "servicios.actualizar_servicio",
+          "method": "PUT",
+          "path": "/api/servicios/{servicio_id}",
+          "auth_required": true,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "medium",
+          "requires_architectural_transformation": false,
+          "anti_patterns": []
+        },
+        {
+          "id": "servicios.eliminar_servicio",
+          "method": "DELETE",
+          "path": "/api/servicios/{servicio_id}",
+          "auth_required": true,
+          "admin_required": true,
+          "compute_target": "lambda",
+          "migration_complexity": "medium",
+          "requires_architectural_transformation": false,
+          "anti_patterns": []
+        }
+      ]
+    },
+    {
+      "name": "transacciones",
+      "url_prefix": "/api/transacciones",
+      "cohesion": "low",
+      "isolation": "medium",
+      "cross_blueprint_imports": [
+        "transacciones → clientes"
+      ],
+      "endpoints": [
+        {
+          "id": "transacciones.listar_ordenes",
+          "method": "GET",
+          "path": "/api/transacciones/",
+          "auth_required": true,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "high",
+          "requires_architectural_transformation": false,
+          "anti_patterns": [
+            {
+              "code": "AP-cross-blueprint",
+              "description": "Importación directa desde el módulo routes.py de otro blueprint, generando acoplamiento lateral incompatible con la arquitectura de funciones Lambda independientes. Debe resolverse mediante una Lambda Layer compartida.",
+              "gap_ids": [],
+              "severity": "high",
+              "location": "from app.blueprints.clientes.routes import ..."
+            }
+          ]
+        },
+        {
+          "id": "transacciones.crear_orden",
+          "method": "POST",
+          "path": "/api/transacciones/",
+          "auth_required": true,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "high",
+          "requires_architectural_transformation": false,
+          "anti_patterns": [
+            {
+              "code": "AP-cross-blueprint",
+              "description": "Importación directa desde el módulo routes.py de otro blueprint, generando acoplamiento lateral incompatible con la arquitectura de funciones Lambda independientes. Debe resolverse mediante una Lambda Layer compartida.",
+              "gap_ids": [],
+              "severity": "high",
+              "location": "from app.blueprints.clientes.routes import ..."
+            }
+          ]
+        },
+        {
+          "id": "transacciones.obtener_orden",
+          "method": "GET",
+          "path": "/api/transacciones/{orden_id}",
+          "auth_required": true,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "high",
+          "requires_architectural_transformation": false,
+          "anti_patterns": [
+            {
+              "code": "AP-cross-blueprint",
+              "description": "Importación directa desde el módulo routes.py de otro blueprint, generando acoplamiento lateral incompatible con la arquitectura de funciones Lambda independientes. Debe resolverse mediante una Lambda Layer compartida.",
+              "gap_ids": [],
+              "severity": "high",
+              "location": "from app.blueprints.clientes.routes import ..."
+            }
+          ]
+        },
+        {
+          "id": "transacciones.actualizar_orden",
+          "method": "PUT",
+          "path": "/api/transacciones/{orden_id}",
+          "auth_required": true,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "high",
+          "requires_architectural_transformation": false,
+          "anti_patterns": [
+            {
+              "code": "AP-cross-blueprint",
+              "description": "Importación directa desde el módulo routes.py de otro blueprint, generando acoplamiento lateral incompatible con la arquitectura de funciones Lambda independientes. Debe resolverse mediante una Lambda Layer compartida.",
+              "gap_ids": [],
+              "severity": "high",
+              "location": "from app.blueprints.clientes.routes import ..."
+            }
+          ]
+        },
+        {
+          "id": "transacciones.cambiar_estado_orden",
+          "method": "PATCH",
+          "path": "/api/transacciones/{orden_id}/estado",
+          "auth_required": true,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "high",
+          "requires_architectural_transformation": false,
+          "anti_patterns": [
+            {
+              "code": "AP-cross-blueprint",
+              "description": "Importación directa desde el módulo routes.py de otro blueprint, generando acoplamiento lateral incompatible con la arquitectura de funciones Lambda independientes. Debe resolverse mediante una Lambda Layer compartida.",
+              "gap_ids": [],
+              "severity": "high",
+              "location": "from app.blueprints.clientes.routes import ..."
+            }
+          ]
+        },
+        {
+          "id": "transacciones.subir_adjunto",
+          "method": "POST",
+          "path": "/api/transacciones/{orden_id}/adjunto",
+          "auth_required": true,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "high",
+          "requires_architectural_transformation": false,
+          "anti_patterns": [
+            {
+              "code": "AP-cross-blueprint",
+              "description": "Importación directa desde el módulo routes.py de otro blueprint, generando acoplamiento lateral incompatible con la arquitectura de funciones Lambda independientes. Debe resolverse mediante una Lambda Layer compartida.",
+              "gap_ids": [],
+              "severity": "high",
+              "location": "from app.blueprints.clientes.routes import ..."
+            }
+          ]
+        },
+        {
+          "id": "transacciones.cancelar_orden",
+          "method": "DELETE",
+          "path": "/api/transacciones/{orden_id}",
+          "auth_required": true,
+          "admin_required": true,
+          "compute_target": "lambda",
+          "migration_complexity": "high",
+          "requires_architectural_transformation": false,
+          "anti_patterns": [
+            {
+              "code": "AP-cross-blueprint",
+              "description": "Importación directa desde el módulo routes.py de otro blueprint, generando acoplamiento lateral incompatible con la arquitectura de funciones Lambda independientes. Debe resolverse mediante una Lambda Layer compartida.",
+              "gap_ids": [],
+              "severity": "high",
+              "location": "from app.blueprints.clientes.routes import ..."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "reportes",
+      "url_prefix": "/api/reportes",
+      "cohesion": "low",
+      "isolation": "medium",
+      "cross_blueprint_imports": [
+        "reportes → servicios"
+      ],
+      "endpoints": [
+        {
+          "id": "reportes.resumen_negocio",
+          "method": "GET",
+          "path": "/api/reportes/resumen",
+          "auth_required": true,
+          "admin_required": true,
+          "compute_target": "lambda",
+          "migration_complexity": "high",
+          "requires_architectural_transformation": false,
+          "anti_patterns": [
+            {
+              "code": "AP-cross-blueprint",
+              "description": "Importación directa desde el módulo routes.py de otro blueprint, generando acoplamiento lateral incompatible con la arquitectura de funciones Lambda independientes. Debe resolverse mediante una Lambda Layer compartida.",
+              "gap_ids": [],
+              "severity": "high",
+              "location": "from app.blueprints.servicios.routes import ..."
+            }
+          ]
+        },
+        {
+          "id": "reportes.reporte_ingresos",
+          "method": "GET",
+          "path": "/api/reportes/ingresos",
+          "auth_required": true,
+          "admin_required": true,
+          "compute_target": "lambda",
+          "migration_complexity": "high",
+          "requires_architectural_transformation": false,
+          "anti_patterns": [
+            {
+              "code": "AP-cross-blueprint",
+              "description": "Importación directa desde el módulo routes.py de otro blueprint, generando acoplamiento lateral incompatible con la arquitectura de funciones Lambda independientes. Debe resolverse mediante una Lambda Layer compartida.",
+              "gap_ids": [],
+              "severity": "high",
+              "location": "from app.blueprints.servicios.routes import ..."
+            }
+          ]
+        },
+        {
+          "id": "reportes.reporte_tecnicos",
+          "method": "GET",
+          "path": "/api/reportes/tecnicos",
+          "auth_required": true,
+          "admin_required": true,
+          "compute_target": "lambda",
+          "migration_complexity": "high",
+          "requires_architectural_transformation": false,
+          "anti_patterns": [
+            {
+              "code": "AP-cross-blueprint",
+              "description": "Importación directa desde el módulo routes.py de otro blueprint, generando acoplamiento lateral incompatible con la arquitectura de funciones Lambda independientes. Debe resolverse mediante una Lambda Layer compartida.",
+              "gap_ids": [],
+              "severity": "high",
+              "location": "from app.blueprints.servicios.routes import ..."
+            }
+          ]
+        },
+        {
+          "id": "reportes.servicios_mas_solicitados",
+          "method": "GET",
+          "path": "/api/reportes/servicios-top",
+          "auth_required": true,
+          "admin_required": false,
+          "compute_target": "lambda",
+          "migration_complexity": "high",
+          "requires_architectural_transformation": false,
+          "anti_patterns": [
+            {
+              "code": "AP-cross-blueprint",
+              "description": "Importación directa desde el módulo routes.py de otro blueprint, generando acoplamiento lateral incompatible con la arquitectura de funciones Lambda independientes. Debe resolverse mediante una Lambda Layer compartida.",
+              "gap_ids": [],
+              "severity": "high",
+              "location": "from app.blueprints.servicios.routes import ..."
+            }
+          ]
+        },
+        {
+          "id": "reportes.estado_cache",
+          "method": "GET",
+          "path": "/api/reportes/estado-cache",
+          "auth_required": true,
+          "admin_required": true,
+          "compute_target": "lambda",
+          "migration_complexity": "high",
+          "requires_architectural_transformation": false,
+          "anti_patterns": [
+            {
+              "code": "AP-cross-blueprint",
+              "description": "Importación directa desde el módulo routes.py de otro blueprint, generando acoplamiento lateral incompatible con la arquitectura de funciones Lambda independientes. Debe resolverse mediante una Lambda Layer compartida.",
+              "gap_ids": [],
+              "severity": "high",
+              "location": "from app.blueprints.servicios.routes import ..."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "lambda_layers": [
+    {
+      "name": "db-layer",
+      "description": "Modelos SQLAlchemy, conexión a RDS Proxy, y lógica de persistencia.",
+      "consumed_by": [
+        "all_modules"
+      ]
+    },
+    {
+      "name": "auth-layer",
+      "description": "Validación JWT, DynamoDB blacklist, y lógica de autorización.",
+      "consumed_by": [
+        "auth",
+        "api_gateway_authorizer"
+      ]
+    },
+    {
+      "name": "utils-layer",
+      "description": "Funciones auxiliares y utilerías sin dependencias de Flask.",
+      "consumed_by": [
+        "all_modules"
+      ]
+    }
+  ],
+  "migration_sequence": [
+    {
+      "phase": 1,
+      "module": "auth",
+      "justification": "Menor acoplamiento (isolation=high). Migración de bajo riesgo.",
+      "prerequisites": []
+    },
+    {
+      "phase": 2,
+      "module": "clientes",
+      "justification": "Complejidad alta por anti-patrones detectados.",
+      "prerequisites": [
+        "Completar Fase 1"
+      ]
+    },
+    {
+      "phase": 3,
+      "module": "servicios",
+      "justification": "Complejidad alta por anti-patrones detectados.",
+      "prerequisites": [
+        "Completar Fase 2",
+        "Autorizador Lambda desplegado (Fase 2)"
+      ]
+    },
+    {
+      "phase": 4,
+      "module": "reportes",
+      "justification": "Acoplamiento medio. Dependencias: reportes → servicios.",
+      "prerequisites": [
+        "Completar Fase 3",
+        "Autorizador Lambda desplegado (Fase 2)"
+      ]
+    },
+    {
+      "phase": 5,
+      "module": "transacciones",
+      "justification": "Acoplamiento medio. Dependencias: transacciones → clientes.",
+      "prerequisites": [
+        "Completar Fase 4",
+        "Autorizador Lambda desplegado (Fase 2)"
+      ]
+    }
+  ]
+}

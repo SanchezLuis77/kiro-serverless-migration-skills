@@ -1,0 +1,89 @@
+{
+  "treatment_id": "T1|T2|T3",
+  "treatment_name": "Claude Baseline | Kiro Baseline | Kiro + Skills",
+  "timestamp_start": "2026-11-XX",
+  "timestamp_end": "2026-11-XX",
+  "duration_minutes": 0,
+  "investigator": "Luis Gerardo Sánchez Ordóñez",
+  
+  "coverage": {
+    "total_endpoints": 29,
+    "covered_endpoints": 0,
+    "coverage_percentage": 0.0,
+    "endpoints_by_module": {
+      "auth": {"total": 5, "covered": 0},
+      "clientes": {"total": 6, "covered": 0},
+      "servicios": {"total": 6, "covered": 0},
+      "transacciones": {"total": 7, "covered": 0},
+      "reportes": {"total": 5, "covered": 0}
+    }
+  },
+  
+  "gaps_resolved": {
+    "GAP-01": {
+      "resolved": false,
+      "description": "Connection pooling",
+      "solution": "RDS Proxy",
+      "evidence": ""
+    },
+    "GAP-02": {
+      "resolved": false,
+      "description": "Local filesystem",
+      "solution": "S3 presigned URLs",
+      "evidence": ""
+    },
+    "GAP-03": {
+      "resolved": false,
+      "description": "Token blacklist in-memory",
+      "solution": "DynamoDB TTL",
+      "evidence": ""
+    },
+    "total_resolved": 0
+  },
+  
+  "templates": {
+    "total_generated": 0,
+    "syntactically_valid": 0,
+    "deployable": 0,
+    "template_list": [],
+    "validation_errors": []
+  },
+  
+  "lambda_code": {
+    "total_functions": 0,
+    "syntactically_valid": 0,
+    "has_handler": 0,
+    "functions_list": []
+  },
+  
+  "documentation": {
+    "readme_files": 0,
+    "deployment_guides": 0,
+    "migration_guides": 0,
+    "total_pages": 0,
+    "documentation_list": []
+  },
+  
+  "anti_patterns": {
+    "detected": 0,
+    "expected": 7,
+    "detection_rate": 0.0,
+    "patterns_detected": []
+  },
+  
+  "effort": {
+    "messages_exchanged": 0,
+    "regenerations_requested": 0,
+    "manual_fixes": 0,
+    "tool_calls": 0,
+    "skills_activated": 0
+  },
+  
+  "qualitative": {
+    "ease_of_use": "1-5 scale",
+    "documentation_quality": "1-5 scale",
+    "code_quality": "1-5 scale",
+    "deployment_readiness": "1-5 scale",
+    "notes": "Observaciones del investigador"
+  }
+}

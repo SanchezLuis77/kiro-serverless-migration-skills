@@ -1,0 +1,170 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'RDS Aurora Serverless v2 + RDS Proxy - Skill 02'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: 'taller'
+    Description: 'Nombre del ambiente'
+
+  DBName:
+    Type: String
+    Default: 'taller_db'
+    Description: 'Nombre de la base de datos'
+
+  DBUsername:
+    Type: String
+    Default: 'admin'
+    Description: 'Usuario master de la base de datos'
+    NoEcho: true
+
+  DBPassword:
+    Type: String
+    NoEcho: true
+    Description: 'Contraseña master (mínimo 8 caracteres)'
+    MinLength: 8
+
+Resources:
+  # Secret en Secrets Manager para credenciales RDS
+  DBSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub '${EnvironmentName}-rds-secret'
+      Description: 'Credenciales RDS Aurora'
+      SecretString: !Sub |
+        {
+          "username": "${DBUsername}",
+          "password": "${DBPassword}",
+          "engine": "postgres",
+          "host": "${DBCluster.Endpoint.Address}",
+          "port": 5432,
+          "dbname": "${DBName}"
+        }
+
+  # DB Subnet Group
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupName: !Sub '${EnvironmentName}-db-subnet-group'
+      DBSubnetGroupDescription: 'Subnet group para RDS Aurora'
+      SubnetIds:
+        - Fn::ImportValue: !Sub '${EnvironmentName}-PrivateSubnet1'
+        - Fn::ImportValue: !Sub '${EnvironmentName}-PrivateSubnet2'
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-db-subnet-group'
+
+  # Aurora Serverless v2 Cluster
+  DBCluster:
+    Type: AWS::RDS::DBCluster
+    Properties:
+      Engine: aurora-postgresql
+      EngineMode: provisioned
+      EngineVersion: '15.4'
+      DatabaseName: !Ref DBName
+      MasterUsername: !Ref DBUsername
+      MasterUserPassword: !Ref DBPassword
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VpcSecurityGroupIds:
+        - Fn::ImportValue: !Sub '${EnvironmentName}-RDSSG'
+      ServerlessV2ScalingConfiguration:
+        MinCapacity: 0.5
+        MaxCapacity: 2
+      BackupRetentionPeriod: 7
+      PreferredBackupWindow: '03:00-04:00'
+      PreferredMaintenanceWindow: 'sun:04:00-sun:05:00'
+      StorageEncrypted: true
+      EnableHttpEndpoint: false
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-aurora-cluster'
+
+  # Aurora Instance (Serverless v2)
+  DBInstance1:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      Engine: aurora-postgresql
+      DBClusterIdentifier: !Ref DBCluster
+      DBInstanceClass: db.serverless
+      PubliclyAccessible: false
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-aurora-instance-1'
+
+  # RDS Proxy
+  DBProxy:
+    Type: AWS::RDS::DBProxy
+    Properties:
+      DBProxyName: !Sub '${EnvironmentName}-rds-proxy'
+      EngineFamily: POSTGRESQL
+      Auth:
+        - AuthScheme: SECRETS
+          SecretArn: !Ref DBSecret
+          IAMAuth: DISABLED
+      RoleArn: !GetAtt DBProxyRole.Arn
+      VpcSubnetIds:
+        - Fn::ImportValue: !Sub '${EnvironmentName}-PrivateSubnet1'
+        - Fn::ImportValue: !Sub '${EnvironmentName}-PrivateSubnet2'
+      VpcSecurityGroupIds:
+        - Fn::ImportValue: !Sub '${EnvironmentName}-RDSSG'
+      RequireTLS: true
+      IdleClientTimeout: 1800
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-rds-proxy'
+
+  DBProxyTargetGroup:
+    Type: AWS::RDS::DBProxyTargetGroup
+    Properties:
+      DBProxyName: !Ref DBProxy
+      TargetGroupName: default
+      DBClusterIdentifiers:
+        - !Ref DBCluster
+
+  # IAM Role para RDS Proxy
+  DBProxyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: rds.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AmazonRDSProxyExecutionRole'
+      Policies:
+        - PolicyName: DBProxySecretsAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'secretsmanager:GetSecretValue'
+                Resource: !Ref DBSecret
+
+Outputs:
+  DBClusterEndpoint:
+    Description: 'Aurora Cluster Endpoint'
+    Value: !GetAtt DBCluster.Endpoint.Address
+    Export:
+      Name: !Sub '${EnvironmentName}-DBClusterEndpoint'
+
+  DBProxyEndpoint:
+    Description: 'RDS Proxy Endpoint (usar este en Lambdas)'
+    Value: !GetAtt DBProxy.Endpoint
+    Export:
+      Name: !Sub '${EnvironmentName}-DBProxyEndpoint'
+
+  DBSecretArn:
+    Description: 'ARN del Secret con credenciales'
+    Value: !Ref DBSecret
+    Export:
+      Name: !Sub '${EnvironmentName}-DBSecretArn'
+
+  DBName:
+    Description: 'Nombre de la base de datos'
+    Value: !Ref DBName
+    Export:
+      Name: !Sub '${EnvironmentName}-DBName'

@@ -1,0 +1,40 @@
+{
+  "treatment_dir": "kiro-serverless-migration-skills\\experiment\\treatment-3",
+  "timestamp": "2026-11-17T16:22:35.027667Z",
+  "coverage": {
+    "total_endpoints": 29,
+    "covered_endpoints": 29,
+    "coverage_percentage": 100.0
+  },
+  "gaps_resolved": {
+    "GAP-01": true,
+    "GAP-02": true,
+    "GAP-03": true,
+    "total_resolved": 3
+  },
+  "templates": {
+    "total_generated": 7,
+    "syntactically_valid": 6,
+    "deployable": 6,
+    "template_list": [
+      "output\\persistence\\template-rds.yaml",
+      "output\\persistence\\template-vpc.yaml",
+      "output\\strangler\\template-api-gateway.yaml",
+      "output\\strangler\\template-authorizer.yaml",
+      "output\\uploads\\template-presigned-lambda.yaml",
+      "output\\uploads\\template-s3.yaml",
+      "monolith\\serverless_taller\\serverless.yml"
+    ]
+  },
+  "lambda_code": {
+    "total_functions": 2,
+    "syntactically_valid": 2,
+    "has_handler": 2
+  },
+  "documentation": {
+    "readme_files": 2,
+    "deployment_guides": 3,
+    "migration_guides": 1,
+    "total_pages": 18
+  }
+}

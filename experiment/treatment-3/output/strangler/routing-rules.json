@@ -1,0 +1,191 @@
+{
+  "version": "1.0.0",
+  "total_phases": 6,
+  "current_phase": 0,
+  "phases": [
+    {
+      "phase": 0,
+      "name": "baseline",
+      "description": "Todo al monolito — sin migración aún",
+      "routes": [
+        {
+          "path": "/{proxy+}",
+          "method": "ANY",
+          "target": "monolith",
+          "integration_type": "HTTP_PROXY"
+        }
+      ]
+    },
+    {
+      "phase": 1,
+      "name": "auth",
+      "description": "Menor acoplamiento (isolation=high). Migración de bajo riesgo.",
+      "prerequisites": [],
+      "routes": [
+        {
+          "path": "/api/auth/{proxy+}",
+          "method": "ANY",
+          "target": "lambda:auth",
+          "integration_type": "AWS_PROXY"
+        },
+        {
+          "path": "/{proxy+}",
+          "method": "ANY",
+          "target": "monolith",
+          "integration_type": "HTTP_PROXY"
+        }
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "clientes",
+      "description": "Complejidad alta por anti-patrones detectados.",
+      "prerequisites": [
+        "Completar Fase 1"
+      ],
+      "routes": [
+        {
+          "path": "/api/auth/{proxy+}",
+          "method": "ANY",
+          "target": "lambda:auth",
+          "integration_type": "AWS_PROXY"
+        },
+        {
+          "path": "/api/clientes/{proxy+}",
+          "method": "ANY",
+          "target": "lambda:clientes",
+          "integration_type": "AWS_PROXY"
+        },
+        {
+          "path": "/{proxy+}",
+          "method": "ANY",
+          "target": "monolith",
+          "integration_type": "HTTP_PROXY"
+        }
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "servicios",
+      "description": "Complejidad alta por anti-patrones detectados.",
+      "prerequisites": [
+        "Completar Fase 2",
+        "Autorizador Lambda desplegado (Fase 2)"
+      ],
+      "routes": [
+        {
+          "path": "/api/auth/{proxy+}",
+          "method": "ANY",
+          "target": "lambda:auth",
+          "integration_type": "AWS_PROXY"
+        },
+        {
+          "path": "/api/clientes/{proxy+}",
+          "method": "ANY",
+          "target": "lambda:clientes",
+          "integration_type": "AWS_PROXY"
+        },
+        {
+          "path": "/api/servicios/{proxy+}",
+          "method": "ANY",
+          "target": "lambda:servicios",
+          "integration_type": "AWS_PROXY"
+        },
+        {
+          "path": "/{proxy+}",
+          "method": "ANY",
+          "target": "monolith",
+          "integration_type": "HTTP_PROXY"
+        }
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "reportes",
+      "description": "Acoplamiento medio. Dependencias: reportes → servicios.",
+      "prerequisites": [
+        "Completar Fase 3",
+        "Autorizador Lambda desplegado (Fase 2)"
+      ],
+      "routes": [
+        {
+          "path": "/api/auth/{proxy+}",
+          "method": "ANY",
+          "target": "lambda:auth",
+          "integration_type": "AWS_PROXY"
+        },
+        {
+          "path": "/api/clientes/{proxy+}",
+          "method": "ANY",
+          "target": "lambda:clientes",
+          "integration_type": "AWS_PROXY"
+        },
+        {
+          "path": "/api/servicios/{proxy+}",
+          "method": "ANY",
+          "target": "lambda:servicios",
+          "integration_type": "AWS_PROXY"
+        },
+        {
+          "path": "/api/reportes/{proxy+}",
+          "method": "ANY",
+          "target": "lambda:reportes",
+          "integration_type": "AWS_PROXY"
+        },
+        {
+          "path": "/{proxy+}",
+          "method": "ANY",
+          "target": "monolith",
+          "integration_type": "HTTP_PROXY"
+        }
+      ]
+    },
+    {
+      "phase": 5,
+      "name": "transacciones",
+      "description": "Acoplamiento medio. Dependencias: transacciones → clientes.",
+      "prerequisites": [
+        "Completar Fase 4",
+        "Autorizador Lambda desplegado (Fase 2)"
+      ],
+      "routes": [
+        {
+          "path": "/api/auth/{proxy+}",
+          "method": "ANY",
+          "target": "lambda:auth",
+          "integration_type": "AWS_PROXY"
+        },
+        {
+          "path": "/api/clientes/{proxy+}",
+          "method": "ANY",
+          "target": "lambda:clientes",
+          "integration_type": "AWS_PROXY"
+        },
+        {
+          "path": "/api/servicios/{proxy+}",
+          "method": "ANY",
+          "target": "lambda:servicios",
+          "integration_type": "AWS_PROXY"
+        },
+        {
+          "path": "/api/reportes/{proxy+}",
+          "method": "ANY",
+          "target": "lambda:reportes",
+          "integration_type": "AWS_PROXY"
+        },
+        {
+          "path": "/api/transacciones/{proxy+}",
+          "method": "ANY",
+          "target": "lambda:transacciones",
+          "integration_type": "AWS_PROXY"
+        },
+        {
+          "path": "/{proxy+}",
+          "method": "ANY",
+          "target": "monolith",
+          "integration_type": "HTTP_PROXY"
+        }
+      ]
+    }
+  ]
+}

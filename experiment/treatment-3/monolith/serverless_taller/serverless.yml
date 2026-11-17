@@ -1,0 +1,255 @@
+service: taller-pyme-serverless
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: ${opt:region, 'us-east-1'}
+  stage: ${opt:stage, 'dev'}
+  memorySize: 256
+  timeout: 29  # API Gateway tiene timeout máximo de 29s
+
+  # Variables de entorno compartidas por todas las funciones
+  environment:
+    DATABASE_URL: ${ssm:/taller/${self:provider.stage}/database_url}
+    JWT_SECRET_KEY: ${ssm:/taller/${self:provider.stage}/jwt_secret}
+    REDIS_URL: ${ssm:/taller/${self:provider.stage}/redis_url}
+    S3_BUCKET_ADJUNTOS: ${self:custom.s3BucketAdjuntos}
+    SES_SENDER_EMAIL: ${ssm:/taller/${self:provider.stage}/ses_sender}
+    TOKENS_TABLE: taller-tokens-revocados-${self:provider.stage}
+    AWS_REGION: ${self:provider.region}
+    LOG_LEVEL: INFO
+
+  # Permisos IAM para todas las funciones
+  # GAP: permisos demasiado amplios — en producción usar least-privilege por función
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:DeleteObject
+          Resource: arn:aws:s3:::${self:custom.s3BucketAdjuntos}/*
+        - Effect: Allow
+          Action:
+            - ses:SendEmail
+            - ses:SendRawEmail
+          Resource: '*'
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:DeleteItem
+          Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TOKENS_TABLE}
+        - Effect: Allow
+          Action:
+            - ssm:GetParameter
+          Resource: arn:aws:ssm:${self:provider.region}:*:parameter/taller/*
+
+  # GAP: VPC requerida para ElastiCache Redis
+  # Configurar VPC aumenta cold start ~500ms
+  # vpc:
+  #   securityGroupIds:
+  #     - ${ssm:/taller/${self:provider.stage}/lambda_sg}
+  #   subnetIds:
+  #     - ${ssm:/taller/${self:provider.stage}/subnet_1}
+  #     - ${ssm:/taller/${self:provider.stage}/subnet_2}
+
+custom:
+  s3BucketAdjuntos: taller-adjuntos-${self:provider.stage}-${aws:accountId}
+  pythonRequirements:
+    dockerizePip: true  # Necesario para compilar dependencias nativas en Linux
+    layer: true         # Empaquetar dependencias como Lambda Layer para reducir tamaño
+
+functions:
+
+  auth:
+    handler: functions/auth/handler.handler
+    description: Autenticación JWT — register, login, me, logout, password
+    events:
+      - http:
+          path: /auth/register
+          method: post
+          cors: true
+      - http:
+          path: /auth/login
+          method: post
+          cors: true
+      - http:
+          path: /auth/me
+          method: get
+          cors: true
+      - http:
+          path: /auth/logout
+          method: post
+          cors: true
+      - http:
+          path: /auth/password
+          method: put
+          cors: true
+
+  clientes:
+    handler: functions/clientes/handler.handler
+    description: CRUD de clientes con paginación y caché Redis
+    events:
+      - http:
+          path: /clientes
+          method: get
+          cors: true
+      - http:
+          path: /clientes
+          method: post
+          cors: true
+      - http:
+          path: /clientes/{id}
+          method: get
+          cors: true
+      - http:
+          path: /clientes/{id}
+          method: put
+          cors: true
+      - http:
+          path: /clientes/{id}
+          method: delete
+          cors: true
+      - http:
+          path: /clientes/{id}/historial
+          method: get
+          cors: true
+
+  servicios:
+    handler: functions/servicios/handler.handler
+    description: Catálogo de servicios — endpoints públicos y protegidos
+    events:
+      - http:
+          path: /servicios
+          method: get
+          cors: true
+      - http:
+          path: /servicios/categorias
+          method: get
+          cors: true
+      - http:
+          path: /servicios/{id}
+          method: get
+          cors: true
+      - http:
+          path: /servicios
+          method: post
+          cors: true
+      - http:
+          path: /servicios/{id}
+          method: put
+          cors: true
+      - http:
+          path: /servicios/{id}
+          method: delete
+          cors: true
+
+  transacciones:
+    handler: functions/transacciones/handler.handler
+    description: Órdenes de trabajo — entidad transaccional central
+    timeout: 29
+    events:
+      - http:
+          path: /transacciones
+          method: get
+          cors: true
+      - http:
+          path: /transacciones
+          method: post
+          cors: true
+      - http:
+          path: /transacciones/{id}
+          method: get
+          cors: true
+      - http:
+          path: /transacciones/{id}
+          method: put
+          cors: true
+      - http:
+          path: /transacciones/{id}/estado
+          method: patch
+          cors: true
+      - http:
+          path: /transacciones/{id}/adjunto
+          method: post
+          cors: true
+      - http:
+          path: /transacciones/{id}
+          method: delete
+          cors: true
+
+  reportes:
+    handler: functions/reportes/handler.handler
+    description: KPIs y reportes — solo admin, resultados cacheados
+    memorySize: 512  # Más memoria para queries analíticos
+    events:
+      - http:
+          path: /reportes/resumen
+          method: get
+          cors: true
+      - http:
+          path: /reportes/ingresos
+          method: get
+          cors: true
+      - http:
+          path: /reportes/tecnicos
+          method: get
+          cors: true
+      - http:
+          path: /reportes/servicios-top
+          method: get
+          cors: true
+      - http:
+          path: /reportes/estado-cache
+          method: get
+          cors: true
+
+resources:
+  Resources:
+
+    # Bucket S3 para archivos adjuntos
+    S3BucketAdjuntos:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.s3BucketAdjuntos}
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders: ['*']
+              AllowedMethods: [PUT, GET]
+              AllowedOrigins: ['*']  # GAP: restringir en producción
+              MaxAge: 3000
+
+    # Tabla DynamoDB para tokens revocados (logout)
+    TokensRevocadosTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.TOKENS_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: jti
+            AttributeType: S
+        KeySchema:
+          - AttributeName: jti
+            KeyType: HASH
+        TimeToLiveSpecification:
+          AttributeName: expira_en
+          Enabled: true
+
+    # GAP: RDS PostgreSQL y ElastiCache Redis NO están definidos aquí.
+    # Deben crearse manualmente o con un stack de infraestructura separado
+    # (Terraform, CDK, o CloudFormation separado).
+    # Razón: son recursos stateful que no deben destruirse con cada deploy.
+
+plugins:
+  - serverless-python-requirements
+
+# GAP: No incluye:
+# - serverless-offline (para desarrollo local)
+# - Configuración de WAF para API Gateway
+# - Alarmas CloudWatch
+# - X-Ray tracing
+# - API Gateway usage plans / throttling

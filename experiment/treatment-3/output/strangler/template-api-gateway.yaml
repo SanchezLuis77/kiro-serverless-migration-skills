@@ -1,0 +1,190 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'API Gateway + VPC Link para Strangler Fig - Skill 03'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: 'taller'
+    Description: 'Nombre del ambiente'
+
+  ApiStageName:
+    Type: String
+    Default: 'prod'
+    Description: 'Nombre del stage de API Gateway'
+
+  MonolithURL:
+    Type: String
+    Default: 'http://internal-monolith-alb.local'
+    Description: 'URL del monolito Flask (ALB interno o ECS service)'
+
+Resources:
+  # REST API
+  RestAPI:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Sub '${EnvironmentName}-api'
+      Description: 'API Gateway para migración Strangler Fig'
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-api'
+        - Key: ManagedBy
+          Value: 'Skill-03-Strangler'
+
+  # Lambda Authorizer (referencia desde template-authorizer.yaml)
+  Authorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      Name: !Sub '${EnvironmentName}-jwt-authorizer'
+      Type: TOKEN
+      AuthorizerUri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthorizerFunction.Arn}/invocations'
+      AuthorizerResultTtlInSeconds: 300
+      IdentitySource: method.request.header.Authorization
+      RestApiId: !Ref RestAPI
+
+  # VPC Link para acceso privado al monolito
+  VpcLink:
+    Type: AWS::ApiGateway::VpcLink
+    Properties:
+      Name: !Sub '${EnvironmentName}-vpc-link'
+      Description: 'Conexión privada a monolito Flask'
+      TargetArns:
+        - !Ref MonolithNLB
+
+  # Network Load Balancer para el monolito (target del VPC Link)
+  MonolithNLB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub '${EnvironmentName}-monolith-nlb'
+      Type: network
+      Scheme: internal
+      Subnets:
+        - Fn::ImportValue: !Sub '${EnvironmentName}-PrivateSubnet1'
+        - Fn::ImportValue: !Sub '${EnvironmentName}-PrivateSubnet2'
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-monolith-nlb'
+
+  MonolithTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub '${EnvironmentName}-monolith-tg'
+      Port: 5000
+      Protocol: TCP
+      VpcId:
+        Fn::ImportValue: !Sub '${EnvironmentName}-VPCId'
+      HealthCheckEnabled: true
+      HealthCheckProtocol: HTTP
+      HealthCheckPath: /health
+      HealthCheckIntervalSeconds: 30
+      TargetType: ip
+
+  MonolithListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref MonolithTargetGroup
+      LoadBalancerArn: !Ref MonolithNLB
+      Port: 5000
+      Protocol: TCP
+
+  # Resource raíz con proxy
+  RootResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt RestAPI.RootResourceId
+      PathPart: '{proxy+}'
+      RestApiId: !Ref RestAPI
+
+  # Método ANY para catch-all (Fase 0: todo al monolito)
+  ProxyMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestAPI
+      ResourceId: !Ref RootResource
+      HttpMethod: ANY
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref Authorizer
+      RequestParameters:
+        method.request.path.proxy: true
+      Integration:
+        Type: HTTP_PROXY
+        IntegrationHttpMethod: ANY
+        Uri: !Sub '${MonolithURL}/{proxy}'
+        ConnectionType: VPC_LINK
+        ConnectionId: !Ref VpcLink
+        RequestParameters:
+          integration.request.path.proxy: method.request.path.proxy
+        PassthroughBehavior: WHEN_NO_MATCH
+
+  # Deployment
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - ProxyMethod
+    Properties:
+      RestApiId: !Ref RestAPI
+      Description: 'Initial deployment - Phase 0'
+
+  # Stage
+  ApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      StageName: !Ref ApiStageName
+      RestApiId: !Ref RestAPI
+      DeploymentId: !Ref ApiDeployment
+      Description: !Sub 'Stage ${ApiStageName} - Strangler Fig'
+      TracingEnabled: true
+      MethodSettings:
+        - ResourcePath: '/*'
+          HttpMethod: '*'
+          LoggingLevel: INFO
+          DataTraceEnabled: true
+          MetricsEnabled: true
+      AccessLogSetting:
+        DestinationArn: !GetAtt ApiLogGroup.Arn
+        Format: '$context.requestId $context.httpMethod $context.path $context.status $context.responseLatency'
+
+  # CloudWatch Logs
+  ApiLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/apigateway/${EnvironmentName}-api'
+      RetentionInDays: 7
+
+  # Permission para Lambda Authorizer
+  AuthorizerInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt AuthorizerFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestAPI}/*'
+
+Outputs:
+  ApiGatewayId:
+    Description: 'API Gateway REST API ID'
+    Value: !Ref RestAPI
+    Export:
+      Name: !Sub '${EnvironmentName}-ApiGatewayId'
+
+  ApiGatewayUrl:
+    Description: 'API Gateway URL'
+    Value: !Sub 'https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/${ApiStageName}'
+    Export:
+      Name: !Sub '${EnvironmentName}-ApiGatewayUrl'
+
+  VpcLinkId:
+    Description: 'VPC Link ID'
+    Value: !Ref VpcLink
+    Export:
+      Name: !Sub '${EnvironmentName}-VpcLinkId'
+
+  AuthorizerId:
+    Description: 'Lambda Authorizer ID'
+    Value: !Ref Authorizer
+    Export:
+      Name: !Sub '${EnvironmentName}-AuthorizerId'
