@@ -1,0 +1,395 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'API Gateway completo + 5 Lambdas para migración serverless'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: 'taller'
+    Description: 'Nombre del ambiente'
+
+  LambdaCodeBucket:
+    Type: String
+    Default: 'kiro-lambda-code-2703'
+    Description: 'S3 bucket con el código Lambda'
+
+  VPCId:
+    Type: String
+    Default: 'vpc-054c88795536d72af'
+    Description: 'VPC ID donde desplegar'
+
+  PrivateSubnet1:
+    Type: String
+    Default: 'subnet-0c24d9c7cbca220d8'
+    Description: 'Private Subnet 1'
+
+  PrivateSubnet2:
+    Type: String
+    Default: 'subnet-0d5c8baf0a124a588'
+    Description: 'Private Subnet 2'
+
+  LambdaSecurityGroup:
+    Type: String
+    Default: 'sg-084add8a0cd7696ac'
+    Description: 'Security Group para Lambdas'
+
+Resources:
+  # ============================================================================
+  # IAM ROLE COMPARTIDO PARA TODAS LAS LAMBDAS
+  # ============================================================================
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole'
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+      Policies:
+        - PolicyName: DynamoDBAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'dynamodb:*'
+                Resource: '*'
+
+  # ============================================================================
+  # LAMBDA FUNCTIONS (5 funciones para los 5 módulos)
+  # ============================================================================
+  
+  AuthFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${EnvironmentName}-auth'
+      Runtime: python3.11
+      Handler: handler.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 30
+      MemorySize: 512
+      Code:
+        S3Bucket: !Ref LambdaCodeBucket
+        S3Key: 'auth.zip'
+      Environment:
+        Variables:
+          ENVIRONMENT: !Ref EnvironmentName
+          BLACKLIST_TABLE: !Sub '${EnvironmentName}-token-blacklist'
+
+  ClientesFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${EnvironmentName}-clientes'
+      Runtime: python3.11
+      Handler: handler.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 30
+      MemorySize: 512
+      Code:
+        S3Bucket: !Ref LambdaCodeBucket
+        S3Key: 'clientes.zip'
+      Environment:
+        Variables:
+          ENVIRONMENT: !Ref EnvironmentName
+
+  ServiciosFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${EnvironmentName}-servicios'
+      Runtime: python3.11
+      Handler: handler.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 30
+      MemorySize: 512
+      Code:
+        S3Bucket: !Ref LambdaCodeBucket
+        S3Key: 'servicios.zip'
+      Environment:
+        Variables:
+          ENVIRONMENT: !Ref EnvironmentName
+
+  TransaccionesFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${EnvironmentName}-transacciones'
+      Runtime: python3.11
+      Handler: handler.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 30
+      MemorySize: 512
+      Code:
+        S3Bucket: !Ref LambdaCodeBucket
+        S3Key: 'transacciones.zip'
+      Environment:
+        Variables:
+          ENVIRONMENT: !Ref EnvironmentName
+
+  ReportesFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${EnvironmentName}-reportes'
+      Runtime: python3.11
+      Handler: handler.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 30
+      MemorySize: 512
+      Code:
+        S3Bucket: !Ref LambdaCodeBucket
+        S3Key: 'reportes.zip'
+      Environment:
+        Variables:
+          ENVIRONMENT: !Ref EnvironmentName
+
+  # ============================================================================
+  # LAMBDA PERMISSIONS PARA API GATEWAY
+  # ============================================================================
+  
+  AuthFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref AuthFunction
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*'
+
+  ClientesFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ClientesFunction
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*'
+
+  ServiciosFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ServiciosFunction
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*'
+
+  TransaccionesFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref TransaccionesFunction
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*'
+
+  ReportesFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ReportesFunction
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*'
+
+  # ============================================================================
+  # API GATEWAY REST API
+  # ============================================================================
+  
+  RestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Sub '${EnvironmentName}-api'
+      Description: 'API Gateway para aplicación migrada a serverless'
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  # ============================================================================
+  # API GATEWAY RESOURCES (estructura de rutas)
+  # ============================================================================
+  
+  ApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !GetAtt RestApi.RootResourceId
+      PathPart: 'api'
+
+  # Auth resources
+  AuthResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref ApiResource
+      PathPart: 'auth'
+
+  AuthProxyResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref AuthResource
+      PathPart: '{proxy+}'
+
+  # Clientes resources
+  ClientesResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref ApiResource
+      PathPart: 'clientes'
+
+  ClientesProxyResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref ClientesResource
+      PathPart: '{proxy+}'
+
+  # Servicios resources
+  ServiciosResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref ApiResource
+      PathPart: 'servicios'
+
+  ServiciosProxyResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref ServiciosResource
+      PathPart: '{proxy+}'
+
+  # Transacciones resources
+  TransaccionesResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref ApiResource
+      PathPart: 'transacciones'
+
+  TransaccionesProxyResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref TransaccionesResource
+      PathPart: '{proxy+}'
+
+  # Reportes resources
+  ReportesResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref ApiResource
+      PathPart: 'reportes'
+
+  ReportesProxyResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RestApi
+      ParentId: !Ref ReportesResource
+      PathPart: '{proxy+}'
+
+  # ============================================================================
+  # API GATEWAY METHODS (proxy integration con Lambdas)
+  # ============================================================================
+  
+  # Auth ANY method
+  AuthMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref AuthProxyResource
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthFunction.Arn}/invocations'
+
+  # Clientes ANY method
+  ClientesMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref ClientesProxyResource
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ClientesFunction.Arn}/invocations'
+
+  # Servicios ANY method
+  ServiciosMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref ServiciosProxyResource
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ServiciosFunction.Arn}/invocations'
+
+  # Transacciones ANY method
+  TransaccionesMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref TransaccionesProxyResource
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${TransaccionesFunction.Arn}/invocations'
+
+  # Reportes ANY method
+  ReportesMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !Ref ReportesProxyResource
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ReportesFunction.Arn}/invocations'
+
+  # ============================================================================
+  # API GATEWAY DEPLOYMENT
+  # ============================================================================
+  
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - AuthMethod
+      - ClientesMethod
+      - ServiciosMethod
+      - TransaccionesMethod
+      - ReportesMethod
+    Properties:
+      RestApiId: !Ref RestApi
+      StageName: 'prod'
+
+Outputs:
+  ApiUrl:
+    Description: 'URL del API Gateway'
+    Value: !Sub 'https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod'
+    Export:
+      Name: !Sub '${EnvironmentName}-ApiUrl'
+
+  AuthFunctionArn:
+    Value: !GetAtt AuthFunction.Arn
+  
+  ClientesFunctionArn:
+    Value: !GetAtt ClientesFunction.Arn
+  
+  ServiciosFunctionArn:
+    Value: !GetAtt ServiciosFunction.Arn
+  
+  TransaccionesFunctionArn:
+    Value: !GetAtt TransaccionesFunction.Arn
+  
+  ReportesFunctionArn:
+    Value: !GetAtt ReportesFunction.Arn

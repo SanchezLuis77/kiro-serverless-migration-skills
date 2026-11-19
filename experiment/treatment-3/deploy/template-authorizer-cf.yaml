@@ -1,0 +1,121 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Lambda Authorizer para validación JWT - CloudFormation puro'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: 'taller'
+    Description: 'Nombre del ambiente'
+
+  JWTSecretKey:
+    Type: String
+    NoEcho: true
+    Default: 'kiro-migration-secret-key-change-in-production'
+    Description: 'JWT secret key (mismo que el monolito Flask)'
+
+  LambdaCodeBucket:
+    Type: String
+    Default: 'kiro-lambda-code-2703'
+    Description: 'S3 bucket donde está el código Lambda'
+
+Resources:
+  # DynamoDB Table para token blacklist
+  TokenBlacklistTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${EnvironmentName}-token-blacklist'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: token_jti
+          AttributeType: S
+      KeySchema:
+        - AttributeName: token_jti
+          KeyType: HASH
+      TimeToLiveSpecification:
+        AttributeName: expires_at
+        Enabled: true
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-token-blacklist'
+        - Key: ManagedBy
+          Value: 'Kiro-Skills'
+
+  # IAM Role para Lambda Authorizer
+  AuthorizerExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+      Policies:
+        - PolicyName: DynamoDBAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'dynamodb:GetItem'
+                  - 'dynamodb:Query'
+                  - 'dynamodb:Scan'
+                Resource: !GetAtt TokenBlacklistTable.Arn
+
+  # Lambda Authorizer Function
+  AuthorizerFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${EnvironmentName}-jwt-authorizer'
+      Description: 'Valida tokens JWT y verifica blacklist en DynamoDB'
+      Runtime: python3.11
+      Handler: lambda_function.lambda_handler
+      Role: !GetAtt AuthorizerExecutionRole.Arn
+      Timeout: 5
+      MemorySize: 256
+      Environment:
+        Variables:
+          JWT_SECRET_KEY: !Ref JWTSecretKey
+          BLACKLIST_TABLE_NAME: !Ref TokenBlacklistTable
+          LOG_LEVEL: INFO
+      Code:
+        S3Bucket: !Ref LambdaCodeBucket
+        S3Key: 'authorizer.zip'
+      Tags:
+        - Key: ManagedBy
+          Value: 'Kiro-Skills'
+
+  # CloudWatch Logs
+  AuthorizerLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${EnvironmentName}-jwt-authorizer'
+      RetentionInDays: 7
+
+Outputs:
+  AuthorizerFunctionArn:
+    Description: 'ARN de la Lambda Authorizer'
+    Value: !GetAtt AuthorizerFunction.Arn
+    Export:
+      Name: !Sub '${EnvironmentName}-AuthorizerFunctionArn'
+
+  AuthorizerFunctionName:
+    Description: 'Nombre de la Lambda Authorizer'
+    Value: !Ref AuthorizerFunction
+    Export:
+      Name: !Sub '${EnvironmentName}-AuthorizerFunctionName'
+
+  TokenBlacklistTableName:
+    Description: 'Nombre de la tabla DynamoDB para blacklist'
+    Value: !Ref TokenBlacklistTable
+    Export:
+      Name: !Sub '${EnvironmentName}-TokenBlacklistTableName'
+
+  TokenBlacklistTableArn:
+    Description: 'ARN de la tabla DynamoDB'
+    Value: !GetAtt TokenBlacklistTable.Arn
+    Export:
+      Name: !Sub '${EnvironmentName}-TokenBlacklistTableArn'
