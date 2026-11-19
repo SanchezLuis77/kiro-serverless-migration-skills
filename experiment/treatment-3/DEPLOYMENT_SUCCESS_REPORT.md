@@ -320,3 +320,88 @@ curl https://onkgpc56wh.execute-api.us-east-1.amazonaws.com/prod/api/servicios/
 **Región:** us-east-1
 
 **Estado Final:** ✅ **DESPLIEGUE COMPLETO Y EXITOSO**
+
+---
+
+## APÉNDICE: Evaluación del Patrón Strangler Fig
+
+### ¿Qué Generó el Skill 03?
+
+El Skill 03 (Strangler Fig Generator) **SÍ generó** la especificación completa para migración gradual:
+
+**Archivo:** `output/strangler/routing-rules.json`
+
+**Contenido:** 6 fases de migración incremental:
+- **Fase 0:** 100% monolito (baseline)
+- **Fase 1:** `/api/auth/*` → Lambda, resto → Monolito
+- **Fase 2:** Auth + Clientes → Lambda, resto → Monolito
+- **Fase 3:** Auth + Clientes + Servicios → Lambda, resto → Monolito
+- **Fase 4:** + Reportes → Lambda
+- **Fase 5:** + Transacciones → Lambda (100% migrado)
+
+### ¿Qué Validamos en el Despliegue?
+
+**Se validó la Fase 5 completa** (29/29 endpoints migrados simultáneamente) para demostrar:
+
+1. ✅ Los Skills generan código Lambda funcional para todos los módulos
+2. ✅ API Gateway rutea correctamente a múltiples Lambdas independientes
+3. ✅ La infraestructura se despliega sin errores en AWS
+4. ✅ Todas las integraciones Lambda ↔ API Gateway funcionan
+
+### ¿Por Qué NO se Validaron las Fases Intermedias (0-4)?
+
+La validación de migración gradual real (Strangler Fig completo con coexistencia) requiere:
+
+1. **Monolito desplegado en AWS** (App Runner, Fargate, o EC2 + ALB)
+2. **HTTP_PROXY integration** en API Gateway hacia el monolito
+3. **Routing selectivo por fase:** Algunos endpoints → Lambda, otros → Monolito
+4. **Tráfico real** para medir impacto y rollback por fase
+5. **Múltiples iteraciones** de despliegue gradual (proceso de semanas/meses)
+6. **Monitoreo de métricas** (latencia, errores, throughput) por endpoint
+
+**Alcance del Proyecto:** El objetivo era validar la **generación automática de infraestructura y código** mediante Agent Skills, no simular un proceso completo de migración en producción con tráfico real.
+
+### Evidencia de que Strangler Fig Está Contemplado:
+
+1. ✅ `routing-rules.json` generado con 6 fases detalladas
+2. ✅ API Gateway configurado con routing por módulo (`/api/auth/*`, `/api/clientes/*`, etc.)
+3. ✅ Lambdas desplegadas **independientemente** por módulo (no monolítica)
+4. ✅ Arquitectura permite coexistencia (solo faltaría desplegar monolito + HTTP_PROXY)
+5. ✅ Secuencia de migración definida con dependencias entre fases
+
+### Cómo Aplicar Strangler Fig con Esta Infraestructura:
+
+**Para implementar migración gradual real:**
+
+```yaml
+# Fase 1: Solo Auth migrado
+API Gateway:
+  /api/auth/{proxy+} → Lambda Auth (AWS_PROXY)
+  /{proxy+} → Monolito Flask en App Runner (HTTP_PROXY)
+
+# Fase 2: Auth + Clientes migrados
+API Gateway:
+  /api/auth/{proxy+} → Lambda Auth
+  /api/clientes/{proxy+} → Lambda Clientes
+  /{proxy+} → Monolito (resto de endpoints)
+
+# ... hasta Fase 5 (100% Lambda, monolito apagado)
+```
+
+**Requisitos adicionales:**
+- Desplegar monolito en App Runner: `~15 minutos`
+- Modificar API Gateway con HTTP_PROXY: `~30 minutos`
+- Configurar routing por fase: `~1 hora`
+- **Total esfuerzo adicional:** ~2-3 horas
+
+### Conclusión sobre Strangler Fig:
+
+El Skill 03 **genera toda la infraestructura y especificación necesaria** para implementar el patrón Strangler Fig. El experimento validó la **fase final** (100% migrado) para demostrar que el código generado es funcional y desplegable.
+
+La validación de fases intermedias con coexistencia real monolito-serverless requeriría:
+- Despliegue del monolito en AWS
+- Configuración de routing selectivo
+- Múltiples iteraciones de despliegue gradual
+- Monitoreo de métricas de producción
+
+Esto está **fuera del alcance** de un experimento de 5 meses enfocado en la generación automática de infraestructura, pero la infraestructura generada **soporta completamente** este patrón si se despliega el monolito y se configura el routing gradual.
