@@ -1,0 +1,32 @@
+[
+    {
+        "OutputKey":  "VPCId",
+        "OutputValue":  "vpc-054c88795536d72af",
+        "Description":  "VPC ID",
+        "ExportName":  "taller-VPCId"
+    },
+    {
+        "OutputKey":  "RDSSecurityGroupId",
+        "OutputValue":  "sg-07732791ed5897ba8",
+        "Description":  "Security Group para RDS",
+        "ExportName":  "taller-RDSSG"
+    },
+    {
+        "OutputKey":  "PrivateSubnet2Id",
+        "OutputValue":  "subnet-0d5c8baf0a124a588",
+        "Description":  "Private Subnet 2 ID",
+        "ExportName":  "taller-PrivateSubnet2"
+    },
+    {
+        "OutputKey":  "PrivateSubnet1Id",
+        "OutputValue":  "subnet-0c24d9c7cbca220d8",
+        "Description":  "Private Subnet 1 ID",
+        "ExportName":  "taller-PrivateSubnet1"
+    },
+    {
+        "OutputKey":  "LambdaSecurityGroupId",
+        "OutputValue":  "sg-084add8a0cd7696ac",
+        "Description":  "Security Group para Lambdas",
+        "ExportName":  "taller-LambdaSG"
+    }
+]

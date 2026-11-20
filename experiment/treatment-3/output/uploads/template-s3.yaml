@@ -32,8 +32,8 @@ Resources:
       CorsConfiguration:
         CorsRules:
           - AllowedOrigins:
-- 'https://localhost:3000'
-          - 'https://tu-app.com'
+              - 'https://localhost:3000'
+              - 'https://tu-app.com'
             AllowedMethods:
               - PUT
               - POST

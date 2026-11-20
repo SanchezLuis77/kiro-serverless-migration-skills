@@ -1,0 +1,65 @@
+[2026-11-19 10:38:58] [INFO] ========================================
+[2026-11-19 10:38:58] [INFO] KIRO SERVERLESS MIGRATION DEPLOYMENT
+[2026-11-19 10:38:58] [INFO] ========================================
+[2026-11-19 10:38:58] [INFO] Region: us-east-1
+[2026-11-19 10:38:58] [INFO] Project Prefix: kiro-migration
+[2026-11-19 10:38:58] [INFO] Skip RDS: False
+[2026-11-19 10:38:58] [INFO] Dry Run: True
+[2026-11-19 10:38:58] [INFO] ========================================
+[2026-11-19 10:38:58] [INFO] Checking AWS credentials...
+[2026-11-19 10:39:04] [SUCCESS] AWS Account: 123677442970
+[2026-11-19 10:39:04] [SUCCESS] AWS User: arn:aws:iam::123677442970:user/admin-tesis
+[2026-11-19 10:39:04] [INFO] 
+[2026-11-19 10:39:04] [INFO] PHASE 1: Deploying Network Infrastructure (VPC)
+[2026-11-19 10:39:04] [INFO] Estimated time: 5-10 minutes
+[2026-11-19 10:39:04] [INFO] ========================================
+[2026-11-19 10:39:04] [INFO] Deploying stack: kiro-migration-vpc
+[2026-11-19 10:39:04] [INFO] Template: generated_output/persistence/template-vpc.yaml
+[2026-11-19 10:39:04] [INFO] ========================================
+[2026-11-19 10:39:04] [INFO] DRY RUN - Would deploy kiro-migration-vpc
+[2026-11-19 10:39:06] [ERROR] Error getting stack output: No se puede indizar en una matriz nula.
+[2026-11-19 10:39:08] [ERROR] Error getting stack output: No se puede indizar en una matriz nula.
+[2026-11-19 10:39:09] [ERROR] Error getting stack output: No se puede indizar en una matriz nula.
+[2026-11-19 10:39:11] [ERROR] Error getting stack output: No se puede indizar en una matriz nula.
+[2026-11-19 10:39:11] [SUCCESS] VPC ID: 
+[2026-11-19 10:39:11] [INFO] 
+[2026-11-19 10:39:11] [INFO] PHASE 2: Deploying Database (RDS Aurora Serverless)
+[2026-11-19 10:39:11] [INFO] Estimated time: 30-60 minutes
+[2026-11-19 10:39:11] [INFO] WARNING: This is the most expensive component (~/month)
+[2026-11-19 10:39:11] [INFO] ========================================
+[2026-11-19 10:39:11] [INFO] Deploying stack: kiro-migration-rds
+[2026-11-19 10:39:11] [INFO] Template: generated_output/persistence/template-rds.yaml
+[2026-11-19 10:39:11] [INFO] ========================================
+[2026-11-19 10:39:11] [INFO] DRY RUN - Would deploy kiro-migration-rds
+[2026-11-19 10:39:11] [INFO] 
+[2026-11-19 10:39:11] [INFO] PHASE 3: Deploying DynamoDB Tables
+[2026-11-19 10:39:11] [INFO] Estimated time: 5-10 minutes
+[2026-11-19 10:39:11] [INFO] No separate DynamoDB templates found (may be embedded in API Gateway template)
+[2026-11-19 10:39:11] [INFO] 
+[2026-11-19 10:39:11] [INFO] PHASE 4: Deploying API Gateway + Lambda Authorizer
+[2026-11-19 10:39:11] [INFO] Estimated time: 10-15 minutes
+[2026-11-19 10:39:11] [INFO] 
+[2026-11-19 10:39:11] [INFO] PHASE 5: Deploying S3 Bucket + Lambda Presigned URL Function
+[2026-11-19 10:39:11] [INFO] Estimated time: 10-15 minutes
+[2026-11-19 10:39:11] [INFO] 
+[2026-11-19 10:39:11] [INFO] ========================================
+[2026-11-19 10:39:11] [INFO] DEPLOYMENT SUMMARY
+[2026-11-19 10:39:11] [INFO] ========================================
+[2026-11-19 10:39:11] [INFO] Total Duration: 00:00:06.1959674
+[2026-11-19 10:39:11] [INFO] 
+[2026-11-19 10:39:11] [INFO] Stacks Deployed: 2 / 2
+[2026-11-19 10:39:11] [INFO] 
+[2026-11-19 10:39:11] [SUCCESS] [OK] Phase 1 - Network: kiro-migration-vpc - SUCCESS
+[2026-11-19 10:39:11] [SUCCESS] [OK] Phase 2 - Database (RDS): kiro-migration-rds - SUCCESS
+[2026-11-19 10:39:11] [INFO] 
+[2026-11-19 10:39:11] [INFO] Deployment results saved to: deployment_results/deployment_results.json
+[2026-11-19 10:39:11] [INFO] Deployment log saved to: deployment_results/deployment_log_20261119_103858.txt
+[2026-11-19 10:39:11] [INFO] 
+[2026-11-19 10:39:11] [INFO] ========================================
+[2026-11-19 10:39:11] [INFO] NEXT STEPS
+[2026-11-19 10:39:11] [INFO] ========================================
+[2026-11-19 10:39:11] [INFO] 1. Run end-to-end tests: .\test_deployment.ps1
+[2026-11-19 10:39:11] [INFO] 2. Capture screenshots for thesis documentation
+[2026-11-19 10:39:11] [INFO] 3. IMPORTANT: Run cleanup when done: .\cleanup_infrastructure.ps1
+[2026-11-19 10:39:11] [INFO] 
+[2026-11-19 10:39:11] [SUCCESS] All stacks deployed successfully!

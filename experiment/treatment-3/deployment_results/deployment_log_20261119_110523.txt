@@ -1,0 +1,114 @@
+[2026-11-19 11:05:23] [INFO] ========================================
+[2026-11-19 11:05:23] [INFO] KIRO SERVERLESS MIGRATION DEPLOYMENT
+[2026-11-19 11:05:23] [INFO] ========================================
+[2026-11-19 11:05:23] [INFO] Region: us-east-1
+[2026-11-19 11:05:23] [INFO] Project Prefix: kiro-migration
+[2026-11-19 11:05:23] [INFO] Skip RDS: True
+[2026-11-19 11:05:23] [INFO] Dry Run: False
+[2026-11-19 11:05:23] [INFO] ========================================
+[2026-11-19 11:05:23] [INFO] Checking AWS credentials...
+[2026-11-19 11:05:25] [SUCCESS] AWS Account: 123677442970
+[2026-11-19 11:05:25] [SUCCESS] AWS User: arn:aws:iam::123677442970:user/admin-tesis
+[2026-11-19 11:05:25] [INFO] 
+[2026-11-19 11:05:25] [INFO] PHASE 1: Deploying Network Infrastructure (VPC)
+[2026-11-19 11:05:25] [INFO] Estimated time: 5-10 minutes
+[2026-11-19 11:05:25] [INFO] ========================================
+[2026-11-19 11:05:25] [INFO] Deploying stack: kiro-migration-vpc
+[2026-11-19 11:05:25] [INFO] Template: output/persistence/template-vpc.yaml
+[2026-11-19 11:05:25] [INFO] ========================================
+[2026-11-19 11:05:25] [INFO] Validating template...
+[2026-11-19 11:05:48] [SUCCESS] Template validation successful
+[2026-11-19 11:05:50] [INFO] Stack does not exist, will create
+[2026-11-19 11:05:50] [INFO] Creating stack...
+[2026-11-19 11:05:51] [INFO] Waiting for stack 'kiro-migration-vpc' to complete...
+[2026-11-19 11:05:52] [INFO] Stack status: CREATE_IN_PROGRESS
+[2026-11-19 11:06:24] [INFO] Stack status: CREATE_IN_PROGRESS
+[2026-11-19 11:07:01] [INFO] Stack status: CREATE_IN_PROGRESS
+[2026-11-19 11:07:32] [INFO] Stack status: CREATE_IN_PROGRESS
+[2026-11-19 11:08:03] [INFO] Stack status: CREATE_COMPLETE
+[2026-11-19 11:08:03] [SUCCESS] Stack completed successfully!
+[2026-11-19 11:08:05] [SUCCESS] Stack outputs:
+[2026-11-19 11:08:05] [SUCCESS]   VPCId: vpc-054c88795536d72af
+[2026-11-19 11:08:05] [SUCCESS]   RDSSecurityGroupId: sg-07732791ed5897ba8
+[2026-11-19 11:08:05] [SUCCESS]   PrivateSubnet2Id: subnet-0d5c8baf0a124a588
+[2026-11-19 11:08:05] [SUCCESS]   PrivateSubnet1Id: subnet-0c24d9c7cbca220d8
+[2026-11-19 11:08:05] [SUCCESS]   LambdaSecurityGroupId: sg-084add8a0cd7696ac
+[2026-11-19 11:08:05] [INFO] Outputs saved to: deployment_results/kiro-migration-vpc-outputs.json
+[2026-11-19 11:08:11] [SUCCESS] VPC ID: vpc-054c88795536d72af
+[2026-11-19 11:08:11] [INFO] 
+[2026-11-19 11:08:11] [INFO] PHASE 2: Skipping RDS deployment (--SkipRDS flag set)
+[2026-11-19 11:08:11] [INFO] 
+[2026-11-19 11:08:11] [INFO] PHASE 3: Deploying DynamoDB Tables
+[2026-11-19 11:08:11] [INFO] Estimated time: 5-10 minutes
+[2026-11-19 11:08:11] [INFO] No separate DynamoDB templates found (may be embedded in API Gateway template)
+[2026-11-19 11:08:11] [INFO] 
+[2026-11-19 11:08:11] [INFO] PHASE 4: Deploying API Gateway + Lambda Authorizer
+[2026-11-19 11:08:11] [INFO] Estimated time: 10-15 minutes
+[2026-11-19 11:08:11] [INFO] ========================================
+[2026-11-19 11:08:11] [INFO] Deploying stack: kiro-migration-authorizer
+[2026-11-19 11:08:11] [INFO] Template: output/strangler/template-authorizer.yaml
+[2026-11-19 11:08:11] [INFO] ========================================
+[2026-11-19 11:08:11] [INFO] Validating template...
+[2026-11-19 11:08:12] [SUCCESS] Template validation successful
+[2026-11-19 11:08:13] [INFO] Stack does not exist, will create
+[2026-11-19 11:08:13] [INFO] Creating stack...
+[2026-11-19 11:08:15] [INFO] Waiting for stack 'kiro-migration-authorizer' to complete...
+[2026-11-19 11:08:16] [ERROR] Error deploying stack: System.Management.Automation.RemoteException
+[2026-11-19 11:08:16] [INFO] ========================================
+[2026-11-19 11:08:16] [INFO] Deploying stack: kiro-migration-api-gateway
+[2026-11-19 11:08:16] [INFO] Template: output/strangler/template-api-gateway.yaml
+[2026-11-19 11:08:16] [INFO] ========================================
+[2026-11-19 11:08:16] [INFO] Validating template...
+[2026-11-19 11:08:17] [SUCCESS] Template validation successful
+[2026-11-19 11:08:19] [INFO] Stack does not exist, will create
+[2026-11-19 11:08:19] [INFO] Creating stack...
+[2026-11-19 11:08:20] [INFO] Waiting for stack 'kiro-migration-api-gateway' to complete...
+[2026-11-19 11:08:21] [ERROR] Error deploying stack: System.Management.Automation.RemoteException
+[2026-11-19 11:08:21] [INFO] 
+[2026-11-19 11:08:21] [INFO] PHASE 5: Deploying S3 Bucket + Lambda Presigned URL Function
+[2026-11-19 11:08:21] [INFO] Estimated time: 10-15 minutes
+[2026-11-19 11:08:21] [INFO] ========================================
+[2026-11-19 11:08:21] [INFO] Deploying stack: kiro-migration-s3
+[2026-11-19 11:08:21] [INFO] Template: output/uploads/template-s3.yaml
+[2026-11-19 11:08:21] [INFO] ========================================
+[2026-11-19 11:08:21] [INFO] Validating template...
+[2026-11-19 11:08:23] [SUCCESS] Template validation successful
+[2026-11-19 11:08:24] [INFO] Stack does not exist, will create
+[2026-11-19 11:08:24] [INFO] Creating stack...
+[2026-11-19 11:08:25] [INFO] Waiting for stack 'kiro-migration-s3' to complete...
+[2026-11-19 11:08:27] [ERROR] Error deploying stack: System.Management.Automation.RemoteException
+[2026-11-19 11:08:27] [INFO] ========================================
+[2026-11-19 11:08:27] [INFO] Deploying stack: kiro-migration-presigned-lambda
+[2026-11-19 11:08:27] [INFO] Template: output/uploads/template-presigned-lambda.yaml
+[2026-11-19 11:08:27] [INFO] ========================================
+[2026-11-19 11:08:27] [INFO] Validating template...
+[2026-11-19 11:08:28] [SUCCESS] Template validation successful
+[2026-11-19 11:08:29] [INFO] Stack does not exist, will create
+[2026-11-19 11:08:29] [INFO] Creating stack...
+[2026-11-19 11:08:31] [INFO] Waiting for stack 'kiro-migration-presigned-lambda' to complete...
+[2026-11-19 11:08:32] [ERROR] Error deploying stack: System.Management.Automation.RemoteException
+[2026-11-19 11:08:32] [INFO] 
+[2026-11-19 11:08:32] [INFO] ========================================
+[2026-11-19 11:08:32] [INFO] DEPLOYMENT SUMMARY
+[2026-11-19 11:08:32] [INFO] ========================================
+[2026-11-19 11:08:32] [INFO] Total Duration: 00:03:07.1087724
+[2026-11-19 11:08:32] [INFO] 
+[2026-11-19 11:08:32] [INFO] Stacks Deployed: 4 / 5
+[2026-11-19 11:08:32] [INFO] 
+[2026-11-19 11:08:32] [SUCCESS] [OK] Phase 1 - Network: kiro-migration-vpc - SUCCESS
+[2026-11-19 11:08:32] [ERROR] [FAIL] Phase 4 - Lambda Authorizer: kiro-migration-authorizer - FAILED
+[2026-11-19 11:08:32] [ERROR] [FAIL] Phase 4 - API Gateway: kiro-migration-api-gateway - FAILED
+[2026-11-19 11:08:32] [ERROR] [FAIL] Phase 5 - S3 Bucket: kiro-migration-s3 - FAILED
+[2026-11-19 11:08:32] [ERROR] [FAIL] Phase 5 - Lambda Presigned URL: kiro-migration-presigned-lambda - FAILED
+[2026-11-19 11:08:32] [INFO] 
+[2026-11-19 11:08:32] [INFO] Deployment results saved to: deployment_results/deployment_results.json
+[2026-11-19 11:08:32] [INFO] Deployment log saved to: deployment_results/deployment_log_20261119_110523.txt
+[2026-11-19 11:08:32] [INFO] 
+[2026-11-19 11:08:32] [INFO] ========================================
+[2026-11-19 11:08:32] [INFO] NEXT STEPS
+[2026-11-19 11:08:32] [INFO] ========================================
+[2026-11-19 11:08:32] [INFO] 1. Run end-to-end tests: .\test_deployment.ps1
+[2026-11-19 11:08:32] [INFO] 2. Capture screenshots for thesis documentation
+[2026-11-19 11:08:32] [INFO] 3. IMPORTANT: Run cleanup when done: .\cleanup_infrastructure.ps1
+[2026-11-19 11:08:32] [INFO] 
+[2026-11-19 11:08:32] [WARNING] Some stacks failed to deploy. Check logs for details.

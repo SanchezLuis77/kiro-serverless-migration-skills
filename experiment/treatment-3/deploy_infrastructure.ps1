@@ -11,7 +11,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $OutputDir = "deployment_results"
-$TemplateDir = "generated_output"
+$TemplateDir = "output"
 $LogFile = "$OutputDir/deployment_log_$(Get-Date -Format 'yyyyMMdd_HHmmss').txt"
 
 # Create output directory
@@ -22,7 +22,21 @@ function Write-Log {
     $Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $LogMessage = "[$Timestamp] [$Level] $Message"
     Write-Host $LogMessage
-    Add-Content -Path $LogFile -Value $LogMessage
+    
+    # Use mutex to prevent concurrent file access
+    $MaxRetries = 5
+    $RetryCount = 0
+    $Success = $false
+    
+    while (-not $Success -and $RetryCount -lt $MaxRetries) {
+        try {
+            Add-Content -Path $LogFile -Value $LogMessage -ErrorAction Stop
+            $Success = $true
+        } catch {
+            $RetryCount++
+            Start-Sleep -Milliseconds 100
+        }
+    }
 }
 
 function Wait-ForStackComplete {
@@ -134,11 +148,11 @@ function Deploy-Stack {
     try {
         if ($StackExists) {
             Write-Log "Updating stack..."
-            $Command = "aws cloudformation update-stack --stack-name $StackName --template-body file://$TemplateFile --region $Region $ParamString --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM"
+            $Command = "aws cloudformation update-stack --stack-name $StackName --template-body file://$TemplateFile --region $Region $ParamString --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND"
             Invoke-Expression $Command | Out-Null
         } else {
             Write-Log "Creating stack..."
-            $Command = "aws cloudformation create-stack --stack-name $StackName --template-body file://$TemplateFile --region $Region $ParamString --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM"
+            $Command = "aws cloudformation create-stack --stack-name $StackName --template-body file://$TemplateFile --region $Region $ParamString --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND"
             Invoke-Expression $Command | Out-Null
         }
         
@@ -324,10 +338,14 @@ Write-Log "Estimated time: 10-15 minutes" "INFO"
 
 # Deploy Lambda Authorizer first
 $AuthorizerStackName = "$ProjectPrefix-authorizer"
-$AuthorizerTemplate = "$TemplateDir/strangler-fig/template-authorizer.yaml"
+$AuthorizerTemplate = "$TemplateDir/strangler/template-authorizer.yaml"
 
 if (Test-Path $AuthorizerTemplate) {
-    $AuthorizerSuccess = Deploy-Stack -StackName $AuthorizerStackName -TemplateFile $AuthorizerTemplate -TimeoutMinutes 15
+    $AuthorizerParams = @{
+        JWTSecretKey = "your-secret-key-change-in-production-$(Get-Random)"
+    }
+    
+    $AuthorizerSuccess = Deploy-Stack -StackName $AuthorizerStackName -TemplateFile $AuthorizerTemplate -Parameters $AuthorizerParams -TimeoutMinutes 15
     
     $DeploymentResults.Stacks += @{
         Name = $AuthorizerStackName
@@ -339,13 +357,17 @@ if (Test-Path $AuthorizerTemplate) {
 
 # Deploy API Gateway
 $ApiGatewayStackName = "$ProjectPrefix-api-gateway"
-$ApiGatewayTemplate = "$TemplateDir/strangler-fig/template-api-gateway.yaml"
+$ApiGatewayTemplate = "$TemplateDir/strangler/template-api-gateway.yaml"
 
 if (Test-Path $ApiGatewayTemplate) {
     $ApiParams = @{
         VPCId = $VpcId
         PrivateSubnetIds = "$PrivateSubnet1,$PrivateSubnet2"
-        LambdaSecurityGroupId = $SecurityGroup
+    }
+    
+    # Only add LambdaSecurityGroupId if SecurityGroup is not empty
+    if ($SecurityGroup) {
+        $ApiParams.LambdaSecurityGroupId = $SecurityGroup
     }
     
     $ApiSuccess = Deploy-Stack -StackName $ApiGatewayStackName -TemplateFile $ApiGatewayTemplate -Parameters $ApiParams -TimeoutMinutes 20
@@ -432,7 +454,7 @@ Write-Log ""
 
 foreach ($Stack in $DeploymentResults.Stacks) {
     $Status = if ($Stack.Success) { "SUCCESS" } else { "FAILED" }
-    $Symbol = if ($Stack.Success) { "✓" } else { "✗" }
+    $Symbol = if ($Stack.Success) { "[OK]" } else { "[FAIL]" }
     Write-Log "$Symbol $($Stack.Phase): $($Stack.Name) - $Status" $(if ($Stack.Success) { "SUCCESS" } else { "ERROR" })
 }
 
@@ -456,7 +478,7 @@ Write-Log "3. IMPORTANT: Run cleanup when done: .\cleanup_infrastructure.ps1" "I
 Write-Log ""
 
 if ($SuccessCount -eq $TotalCount) {
-    Write-Log "All stacks deployed successfully! 🎉" "SUCCESS"
+    Write-Log "All stacks deployed successfully!" "SUCCESS"
     exit 0
 } else {
     Write-Log "Some stacks failed to deploy. Check logs for details." "WARNING"

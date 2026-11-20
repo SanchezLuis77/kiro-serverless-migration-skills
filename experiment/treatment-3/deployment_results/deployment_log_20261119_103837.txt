@@ -1,0 +1,15 @@
+[2026-11-19 10:38:37] [INFO] ========================================
+[2026-11-19 10:38:37] [INFO] KIRO SERVERLESS MIGRATION DEPLOYMENT
+[2026-11-19 10:38:37] [INFO] ========================================
+[2026-11-19 10:38:37] [INFO] Region: us-east-1
+[2026-11-19 10:38:37] [INFO] Project Prefix: kiro-migration
+[2026-11-19 10:38:37] [INFO] Skip RDS: False
+[2026-11-19 10:38:37] [INFO] Dry Run: True
+[2026-11-19 10:38:37] [INFO] ========================================
+[2026-11-19 10:38:37] [INFO] Checking AWS credentials...
+[2026-11-19 10:38:39] [SUCCESS] AWS Account: 123677442970
+[2026-11-19 10:38:39] [SUCCESS] AWS User: arn:aws:iam::123677442970:user/admin-tesis
+[2026-11-19 10:38:39] [INFO] 
+[2026-11-19 10:38:39] [INFO] PHASE 1: Deploying Network Infrastructure (VPC)
+[2026-11-19 10:38:39] [INFO] Estimated time: 5-10 minutes
+[2026-11-19 10:38:39] [INFO] ========================================

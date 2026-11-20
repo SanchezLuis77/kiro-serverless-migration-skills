@@ -1,0 +1,16 @@
+{
+    "Success":  false,
+    "Stacks":  [
+                   {
+                       "Phase":  "Phase 1 - Network",
+                       "Template":  "output/persistence/template-vpc.yaml",
+                       "Name":  "kiro-migration-vpc",
+                       "Success":  false
+                   }
+               ],
+    "StartTime":  {
+                      "value":  "\/Date(1795104634055)\/",
+                      "DisplayHint":  2,
+                      "DateTime":  "jueves, 19 de noviembre de 2026 11:10:34 a. m."
+                  }
+}

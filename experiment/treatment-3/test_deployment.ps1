@@ -1,4 +1,4 @@
-# Test Deployment - End-to-End Testing Script
+﻿# Test Deployment - End-to-End Testing Script
 # This script tests the deployed infrastructure to verify it works correctly
 
 param(
@@ -51,14 +51,14 @@ function Test-Component {
     try {
         $Result = & $TestScript
         if ($Result) {
-            Write-Log "✓ Test passed: $Name" "SUCCESS"
+            Write-Log "[OK] Test passed: $Name" "SUCCESS"
             return @{ Name = $Name; Success = $true; Result = $Result }
         } else {
-            Write-Log "✗ Test failed: $Name" "ERROR"
+            Write-Log "[FAIL] Test failed: $Name" "ERROR"
             return @{ Name = $Name; Success = $false; Result = $null }
         }
     } catch {
-        Write-Log "✗ Test failed with exception: $_" "ERROR"
+        Write-Log "[FAIL] Test failed with exception: $_" "ERROR"
         return @{ Name = $Name; Success = $false; Error = $_.Exception.Message }
     }
 }
@@ -339,7 +339,7 @@ Write-Log ""
 
 foreach ($Test in $TestResults.Tests) {
     $Status = if ($Test.Success) { "PASSED" } else { "FAILED" }
-    $Symbol = if ($Test.Success) { "✓" } else { "✗" }
+    $Symbol = if ($Test.Success) { "[OK]" } else { "[FAIL]" }
     Write-Log "$Symbol $($Test.Name): $Status" $(if ($Test.Success) { "SUCCESS" } else { "ERROR" })
 }
 
@@ -369,10 +369,11 @@ Write-Log "- S3 Bucket" "INFO"
 Write-Log ""
 
 if ($PassedCount -eq $TotalCount) {
-    Write-Log "All tests passed! 🎉" "SUCCESS"
+    Write-Log "All tests passed! " "SUCCESS"
     Write-Log "Infrastructure is working correctly." "SUCCESS"
     exit 0
 } else {
     Write-Log "Some tests failed. Review logs for details." "WARNING"
     exit 1
 }
+

@@ -1,4 +1,4 @@
-# Cleanup Infrastructure - Automated Cleanup Script
+﻿# Cleanup Infrastructure - Automated Cleanup Script
 # This script deletes all deployed CloudFormation stacks and resources
 # IMPORTANT: This will DELETE all resources and cannot be undone!
 
@@ -179,8 +179,8 @@ Write-Log "========================================" "INFO"
 # Safety confirmation
 if (-not $Force) {
     Write-Log ""
-    Write-Log "⚠️  WARNING: This will DELETE all deployed infrastructure!" "WARNING"
-    Write-Log "⚠️  This action CANNOT be undone!" "WARNING"
+    Write-Log "[WARNING]  WARNING: This will DELETE all deployed infrastructure!" "WARNING"
+    Write-Log "[WARNING]  This action CANNOT be undone!" "WARNING"
     Write-Log ""
     $Confirmation = Read-Host "Are you sure you want to proceed? Type 'DELETE' to confirm"
     
@@ -340,7 +340,7 @@ Write-Log ""
 
 foreach ($Stack in $CleanupResults.Stacks) {
     $Status = if ($Stack.Success) { "DELETED" } else { "FAILED" }
-    $Symbol = if ($Stack.Success) { "✓" } else { "✗" }
+    $Symbol = if ($Stack.Success) { "[OK]" } else { "[FAIL]" }
     Write-Log "$Symbol $($Stack.Name): $Status" $(if ($Stack.Success) { "SUCCESS" } else { "ERROR" })
 }
 
@@ -352,7 +352,7 @@ Write-Log "Cleanup log saved to: $LogFile" "INFO"
 
 Write-Log ""
 if ($SuccessCount -eq $TotalCount -and $ProjectStacks.Count -eq 0) {
-    Write-Log "Cleanup completed successfully! All resources deleted. ✓" "SUCCESS"
+    Write-Log "Cleanup completed successfully! All resources deleted. [OK]" "SUCCESS"
     Write-Log ""
     Write-Log "COST SAVED: ~$137/month (or ~$4.64/day)" "SUCCESS"
     exit 0
@@ -363,3 +363,4 @@ if ($SuccessCount -eq $TotalCount -and $ProjectStacks.Count -eq 0) {
     Write-Log "If any resources remain, delete them manually to avoid charges." "WARNING"
     exit 1
 }
+
